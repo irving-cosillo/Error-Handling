@@ -80,7 +80,7 @@ export default class ErrorHandlerExamples extends LightningElement {
 
 
 You will see the result displayed as:
-![Error Messages displayed in screen](/Images/ToastError.png)
+![Error Messages displayed in screen](/Images/ToastErrors.png)
 ![Console log error](/Images/ConsoleError.png)
 
 
