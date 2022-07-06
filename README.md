@@ -79,7 +79,7 @@ export default class ErrorHandlerExamples extends LightningElement {
 You will see the result displayed as:
 
 <center>
-    ![Error Messages displayed in screen](/Images/ToastErrors.png)
+    <img src="/Images/ToastErrors.png"></img>
 </center>
 
 <br>
@@ -89,7 +89,7 @@ You will see the result displayed as:
 <br>
 
 <center>
-    ![Console log error](/Images/ConsoleError.png)
+    <img src="/Images/ConsoleError.png"></img>
 </center>
 
 The dmlExceptions property is displaying an array of 2 exceptions (1 per each record), those exceptions are in the same order as they were upserted. If the record was
@@ -99,7 +99,7 @@ If you don't implement the custom exception and just let the code throw the stan
 be displayed as detailed as it is with the first approach. This is the result displaying only standard exceptions:
 
 <center>
-    ![Standard exception log](/Images/StandardExceptionLog.png)
+    <img src="/Images/StandardExceptionLog.png"></img>
 </center>
 
 <br><br>
