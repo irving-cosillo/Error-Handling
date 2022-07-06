@@ -79,11 +79,18 @@ You will see the result displayed as:
 
 ![Error Messages displayed in screen](/Images/ToastErrors.png)
 <br><br>
-![Console log error](/Images/ConsoleError.png)
-<br>
-If you don't implement the custom exception and just let the code to throw the standard one, you still can read it using the **errorHandler** library, but the log won't
-be displayed as detailed as it is with the first approach. This is the result displaying only standard exceptions:
 
+>The library will remove duplicate messages if two or more exceptions display the same error.
+
+<br>
+![Console log error](/Images/ConsoleError.png)
+<br><br>
+The dmlExceptions property is displaying an array of 2 exceptions (1 per each record), those exceptions are in the same order as they were upserted. If the record was
+already created it will display the Id field as it is the case for the first record. Each record will have their own statusCode, fieldNames and message.
+<br>
+If you don't implement the custom exception and just let the code throw the standard one, you still can read it using the **errorHandler** library, but the log won't
+be displayed as detailed as it is with the first approach. This is the result displaying only standard exceptions:
+<br>
 ![Standard exception log](/Images/StandardExceptionLog.png)
 <br><br>
 <!-- 
@@ -98,6 +105,6 @@ be displayed as detailed as it is with the first approach. This is the result di
 
 ## Resources
 
-* errorHandler library was built on top of the [ldsUtils Library](https://github.com/trailheadapps/lwc-recipes/blob/main/force-app/main/default/lwc/ldsUtils/ldsUtils.js).
+* **errorHandler** library was built on top of the [ldsUtils Library](https://github.com/trailheadapps/lwc-recipes/blob/main/force-app/main/default/lwc/ldsUtils/ldsUtils.js).
 * Sending a serialize wrapper class within the message property was taken from [Salesforce error handling best practices blog](https://developer.salesforce.com/blogs/2017/09/error-handling-best-practices-lightning-apex).
 * Exceptions methods and properties [Apex Reference Guide](https://developer.salesforce.com/docs/atlas.en-us.apexref.meta/apexref/apex_classes_exception_methods.htm).
