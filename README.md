@@ -14,7 +14,7 @@ For this example, the Contact object has a Birthdate validation of +18 and a Gen
 
 We are going to change the birthdate to not meet the age validation, this will generate a FIELD_CUSTOM_VALIDATION_EXCEPTION for this record. We are also going to insert a second record with all required fields missing, this will throw a REQUIRED_FIELD_MISSING exception.
 
-We will create the CustomHandledExceptionExamples class and expose a method to throw an exception to a LWC:
+We will create the **CustomHandledExceptionExamples** class and expose the **throwCustomHandledDmlException** method to throw an exception to the **ErrorHandlerExamples** LWC:
 
 ```Apex
 public with sharing class CustomHandledExceptionExamples {
@@ -40,9 +40,7 @@ public with sharing class CustomHandledExceptionExamples {
 ```
 <br>
 
->
 > All properties from **CustomHandledException** class are public, so you can access them after instantiate the object.
->
 
 <br>
 
