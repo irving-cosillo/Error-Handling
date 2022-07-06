@@ -75,15 +75,16 @@ export default class ErrorHandlerExamples extends LightningElement {
 }
 ```
 
-
-
+<br>
 You will see the result displayed as:
 
 ![Error Messages displayed in screen](/Images/ToastErrors.png)
 
+<br>
 
 > The library will remove duplicate messages if two or more exceptions display the same error.
 
+<br>
 
 ![Console log error](/Images/ConsoleError.png)
 
@@ -95,7 +96,7 @@ be displayed as detailed as it is with the first approach. This is the result di
 
 ![Standard exception log](/Images/StandardExceptionLog.png)
 
-
+<br><br>
 
 <!-- 
 ## Recommendations
