@@ -79,8 +79,9 @@ export default class ErrorHandlerExamples extends LightningElement {
 ```
 
 
-You will see the result as:
-![Error Messages displayed in screen and console log](/Images/CustomHandledExceptionErrorMessage.png)
+You will see the result displayed as:
+![Error Messages displayed in screen](/Images/ToastError.png)
+![Console log error](/Images/ConsoleError.png)
 
 
 
