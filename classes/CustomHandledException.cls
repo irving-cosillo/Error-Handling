@@ -7,13 +7,6 @@
  * errors returned by this class in a lwc, use the errorHandler.js library.
  * 
  * <p>Coverage: CustomHandledExceptionTest</p>
- * 
- * <p>
- * Resources:
- * JS Library - https://github.com/trailheadapps/lwc-recipes/blob/main/force-app/main/default/lwc/ldsUtils/ldsUtils.js
- * Sending a serialize wrapper class in the message - https://developer.salesforce.com/blogs/2017/09/error-handling-best-practices-lightning-apex
- * Exception properties and methods - https://developer.salesforce.com/docs/atlas.en-us.apexref.meta/apexref/apex_classes_exception_methods.htm
- * </p>
  */
 public virtual class CustomHandledException extends Exception{
     /**
