@@ -5,8 +5,8 @@ Apex class and JS library for handling errors following the best practices avail
 
 ## About the project
 
-The CustomHandledException Class gathers all the available information of a standard exception, and passes this information through the message property as a serialized string. To get and display the errors returned by this class in a lwc, use the errorHandler.js library.
-<br>
+The **CustomHandledException** Class gathers all the available information of a standard exception, and passes this information through the message property as a serialized string. To get and display the errors returned by this class in a lwc, use the **errorHandler** JS library.
+<br><br>
 
 ## Usage
 
@@ -15,7 +15,7 @@ For this example, the Contact object has a Birthdate validation of +18 and a Gen
 We are going to change the birthdate to not meet the age validation, this will generate a FIELD_CUSTOM_VALIDATION_EXCEPTION for this record. We are also going to insert a second record with all required fields missing, this will throw a REQUIRED_FIELD_MISSING exception.
 
 We will create the CustomHandledExceptionExamples class and expose a method to throw an exception to a LWC:
-
+<br>
 ```Apex
 public with sharing class CustomHandledExceptionExamples {
     @AuraEnabled
@@ -39,12 +39,12 @@ public with sharing class CustomHandledExceptionExamples {
 }
 ```
 <br>
->
+> 
 > All properties from **CustomHandledException** class are public, so you can access them after instantiate the object.
->
+> 
 <br><br>
 The LWC that will cath the exception will be ErrorHandlerExamples:
-
+<br>
 ```js
 import { LightningElement } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
@@ -76,11 +76,10 @@ export default class ErrorHandlerExamples extends LightningElement {
 }
 ```
 <br><br>
-
 You will see the result displayed as:
 
 ![Error Messages displayed in screen](/Images/ToastErrors.png)
-<br>
+<br><br>
 ![Console log error](/Images/ConsoleError.png)
 <br><br>
 
