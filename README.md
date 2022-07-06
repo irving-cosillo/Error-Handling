@@ -39,9 +39,9 @@ public with sharing class CustomHandledExceptionExamples {
 }
 ```
 
-<br>
+
 > All properties from **CustomHandledException** class are public, so you can access them after instantiate the object.
-<br>
+
 
 The LWC that will cath the exception will be ErrorHandlerExamples:
 
