@@ -80,7 +80,7 @@ export default class ErrorHandlerExamples extends LightningElement {
 
 
 You will see the result as:
-![Error Messages displayed in screen and console log] (/Images/CustomHandledExceptionErrorMessage.png)
+![Error Messages displayed in screen and console log](/Images/CustomHandledExceptionErrorMessage.png)
 
 
 
