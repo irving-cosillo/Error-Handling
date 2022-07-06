@@ -5,7 +5,7 @@ Apex class and JS library for handling errors following the best practices avail
 
 ## About the project
 
-The **CustomHandledException** Class gathers all the available information of a standard exception, and passes this information through the message property as a serialized string. To get and display the errors returned by this class in a lwc, use the **errorHandler** JS library.
+The [CustomHandledException](classes/CustomHandledException.cls) Class gathers all the available information of a standard exception, and passes this information through the message property as a serialized string. To get and display the errors returned by this class in a lwc, use the [errorHandler](lwc/errorHandler.js) JS library.
 <br><br>
 
 ## Usage
