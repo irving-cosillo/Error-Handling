@@ -1,14 +1,12 @@
 # Salesforce Error Handling Best Practices
 
 Apex class and JS library for handling errors following the best practices available in Salesforce
-
-
+<br><br>
 
 ## About the project
 
 The CustomHandledException Class gathers all the available information of a standard exception, and passes this information through the message property as a serialized string. To get and display the errors returned by this class in a lwc, use the errorHandler.js library.
-
-
+<br>
 
 ## Usage
 
@@ -34,17 +32,17 @@ public with sharing class CustomHandledExceptionExamples {
                 contacts.add(new Contact());
                 upsert contacts;
             }
-        } catch (Exception ex ) {
+        } catch (DmlException ex ) {
             throw new CustomHandledException(ex, 'This message will be displayed in the view');
         }
     }
 }
 ```
-
-
-> All properties from CustomHandledException class are public, so you can access them after instantiate the object.
-
-
+<br>
+>
+> All properties from **CustomHandledException** class are public, so you can access them after instantiate the object.
+>
+<br><br>
 The LWC that will cath the exception will be ErrorHandlerExamples:
 
 ```js
@@ -77,13 +75,14 @@ export default class ErrorHandlerExamples extends LightningElement {
     }
 }
 ```
-
+<br><br>
 
 You will see the result displayed as:
+
 ![Error Messages displayed in screen](/Images/ToastErrors.png)
+<br>
 ![Console log error](/Images/ConsoleError.png)
-
-
+<br><br>
 
 ## Resources
 
