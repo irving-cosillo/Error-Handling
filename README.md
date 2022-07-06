@@ -80,7 +80,21 @@ You will see the result displayed as:
 ![Error Messages displayed in screen](/Images/ToastErrors.png)
 <br><br>
 ![Console log error](/Images/ConsoleError.png)
+<br>
+If you don't implement the custom exception and just let the code to throw the standard one, you still can read it using the **errorHandler** library, but the log won't
+be displayed as detailed as it is with the first approach. This is the result displaying only standard exceptions:
+
+![Standard exception log](/Images/StandardExceptionLog.png)
 <br><br>
+<!-- 
+## Recommendations
+
+* Do not implement the CustomHandledException in
+<br><br>
+
+## Avoid Doing This
+
+<br><br> -->
 
 ## Resources
 
