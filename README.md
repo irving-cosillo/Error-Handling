@@ -45,7 +45,6 @@ public with sharing class CustomHandledExceptionExamples {
 >
 
 <br>
-The LWC that will cath the exception will be ErrorHandlerExamples:
 
 ```js
 import { LightningElement } from 'lwc';
