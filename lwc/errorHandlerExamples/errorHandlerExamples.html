@@ -1,2 +1,30 @@
 <template>
+    <div class="slds-var-m-bottom_medium">
+        <lightning-card>
+            <div class="slds-var-p-around_medium">
+                <h2 class="slds-text-heading_small slds-var-m-bottom_small slds-align_absolute-center">
+                    Standard Exceptions
+                </h2>
+                <div class="slds-align_absolute-center">
+                    <lightning-button variant="Neutral" label="Dml" value="0" onclick={handleClick} class="slds-var-m-left_x-small"></lightning-button>
+                    <lightning-button variant="Neutral" label="List" value="1" onclick={handleClick} class="slds-var-m-left_x-small"></lightning-button>
+                    <lightning-button variant="Neutral" label="JSON" value="2" onclick={handleClick} class="slds-var-m-left_x-small"></lightning-button>
+                    <lightning-button variant="Neutral" label="Query" value="3" onclick={handleClick} class="slds-var-m-left_x-small"></lightning-button>
+                    <lightning-button variant="Neutral" label="Limit" value="4" onclick={handleClick} class="slds-var-m-left_x-small"></lightning-button>
+                    <lightning-button variant="Neutral" label="Null Pointer" value="5" onclick={handleClick} class="slds-var-m-left_x-small"></lightning-button>
+                </div>
+                <h2 class="slds-text-heading_small slds-var-m-bottom_small slds-var-m-top_medium slds-align_absolute-center">
+                    Custom Handled Exceptions
+                </h2>
+                <div class="slds-align_absolute-center slds-var-m-bottom_medium">
+                    <lightning-button variant="Brand" label="Dml" value="6" onclick={handleClick} class="slds-var-m-left_x-small"></lightning-button>
+                    <lightning-button variant="Brand" label="List" value="7" onclick={handleClick} class="slds-var-m-left_x-small"></lightning-button>
+                    <lightning-button variant="Brand" label="JSON" value="8" onclick={handleClick} class="slds-var-m-left_x-small"></lightning-button>
+                    <lightning-button variant="Brand" label="Query" value="9" onclick={handleClick} class="slds-var-m-left_x-small"></lightning-button>
+                    <lightning-button variant="Brand" label="Limit" value="10" onclick={handleClick} class="slds-var-m-left_x-small"></lightning-button>
+                    <lightning-button variant="Brand" label="Null Pointer" value="11" onclick={handleClick} class="slds-var-m-left_x-small"></lightning-button>
+                </div>
+            </div>
+        </lightning-card>
+    </div>
 </template>

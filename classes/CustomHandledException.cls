@@ -83,7 +83,7 @@ public virtual class CustomHandledException extends Exception{
      * description Serializes the class with all the information of the standard exception into the message property of the standard exception.
      */
     private void setCustomMessage(String serializedException){
-        System.debug('@@@ serializedException: ' + serializedException);
+        System.debug('<CustomHandledException>' + serializedException + '</CustomHandledException>');
         setMessage(serializedException);
     }
 
