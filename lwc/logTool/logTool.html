@@ -4,13 +4,16 @@
 
     <div class="slds-var-m-bottom_medium">
         <lightning-card >
-            <!-- Logs search:
-            <lightning-input 
-                type="datetime" 
-                name="input3" 
-                label="Start Time" 
-                required>
-            </lightning-input> -->
+            <lightning-spinner 
+                if:true={loading}
+                variant="brand"
+                size="large"
+                alternative-text="Loading...">
+            </lightning-spinner>
+
+            <c-log-search
+                onsearch={handleSearch}>
+            </c-log-search>
 
             <div class="slds-var-p-around_large">
                 <div class="slds-clearfix">
@@ -46,12 +49,33 @@
     <lightning-card if:true={selectedLog}>
         <div class="slds-var-p-around_large">
             <div class="slds-var-p-bottom_small">
+                <b>Log Id: </b> {selectedLog.Id}
+            </div>
+            <div class="slds-var-p-bottom_small">
                 <b>User Name: </b> {selectedLog.userName}
             </div>
             <div class="slds-var-p-bottom_small">
                 <b>Profile: </b> {selectedLog.profileName}
             </div>
             <div class="slds-var-p-bottom_small">
+                <b>Type: </b> {selectedLog.type}
+            </div>
+            <div class="slds-var-p-bottom_small">
+                <b>Severity: </b> {selectedLog.severity}
+            </div>
+            <div class="slds-var-p-bottom_small">
+                <b>Custom App: </b> {selectedLog.customApp}
+            </div>
+            <div class="slds-var-p-bottom_small" if:true={selectedLog.message}>
+                <b>Message: </b> {selectedLog.message}
+            </div>
+            <div class="slds-var-p-bottom_small">
+                <b>Stack Trace: </b> {selectedLog.stackTrace}
+            </div>
+            <div class="slds-var-p-bottom_small">
+                <b>Line Number: </b> {selectedLog.lineNumber}
+            </div>
+            <div>
                 <b>Created Date: </b> 
                 <lightning-formatted-date-time 
                     value={selectedLog.createdDate} 
@@ -63,22 +87,7 @@
                     time-zone-name="short">
                 </lightning-formatted-date-time>
             </div>
-            <div class="slds-var-p-bottom_small">
-                <b>Exception Type: </b> {selectedLog.exceptionType}
-            </div>
-            <div class="slds-var-p-bottom_small">
-                <b>Message: </b> {selectedLog.message}
-            </div>
-            <div class="slds-var-p-bottom_small" if:true={selectedLog.optionalMessage}>
-                <b>Optional Message: </b> {selectedLog.optionalMessage}
-            </div>
-            <div class="slds-var-p-bottom_small">
-                <b>Stack Trace: </b> {selectedLog.stackTrace}
-            </div>
-            <div>
-                <b>Line Number: </b> {selectedLog.lineNumber}
-            </div>
-            <template for:each={selectedLog.exception.dmlExceptions} for:item="dmlException">
+            <template for:each={selectedLog.dmlExceptions} for:item="dmlException">
                 <div key={dmlException.Id} class="slds-var-p-horizontal_large slds-var-m-horizontal_large slds-var-p-top_small slds-border_bottom">
                     <div class="slds-var-p-bottom_small" if:true={dmlException.Id}>
                         <b>Id: </b> {dmlException.Id}

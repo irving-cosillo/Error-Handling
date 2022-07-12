@@ -1,0 +1,110 @@
+<!-- sldsValidatorIgnore -->
+<template>
+    <div class="slds-var-p-horizontal_large">
+        <lightning-layout multiple-rows pull-to-boundary="medium">
+            <lightning-layout-item size="12" small-device-size="12" medium-device-size="2" large-device-size="2" padding="horizontal-medium">
+                <div class="slds-card_boundary">
+                    <lightning-card title="Filters">
+                        <lightning-button-icon
+                            if:true={showFilters}
+                            onclick={toggleFilters}
+                            slot="actions"
+                            variant="bare"
+                            icon-name="utility:chevronup">
+                        </lightning-button-icon>
+                        <lightning-button-icon
+                            if:false={showFilters}
+                            onclick={toggleFilters}
+                            slot="actions"
+                            variant="bare"
+                            icon-name="utility:chevrondown">
+                        </lightning-button-icon>
+                        
+                        <lightning-checkbox-group
+                            if:true={showFilters}
+                            name="searchOptions"
+                            options={options}
+                            value={selectedOptions}
+                            onchange={handleChange}
+                            class="slds-var-m-left_medium">
+                        </lightning-checkbox-group>
+
+                        <div if:false={showFilters} style="height: 10px;"></div>
+                    </lightning-card>
+                </div>
+            </lightning-layout-item>
+            <lightning-layout-item size="12" small-device-size="12" medium-device-size="10" large-device-size="10" padding="horizontal-medium">
+                <lightning-layout multiple-rows pull-to-boundary="small">
+                    <lightning-layout-item if:true={optionVisible.Id} size="12" small-device-size="12" medium-device-size={mediumDeviceSizeFilter} large-device-size={largeDeviceSizeFilter} padding="around-small">
+                        <lightning-input
+                            name="Id"
+                            label="Id"
+                            type="search"
+                            onchange={handleChange}
+                        ></lightning-input>
+                    </lightning-layout-item>
+                    <lightning-layout-item if:true={optionVisible.userName} size="12" small-device-size="12" medium-device-size={mediumDeviceSizeFilter} large-device-size={largeDeviceSizeFilter} padding="around-small">
+                        <lightning-input
+                            name="userName"
+                            label="User"
+                            type="search"
+                            onchange={handleChange}
+                        ></lightning-input>
+                    </lightning-layout-item>
+                    <lightning-layout-item if:true={optionVisible.profileName} size="12" small-device-size="12" medium-device-size={mediumDeviceSizeFilter} large-device-size={largeDeviceSizeFilter} padding="around-small">
+                        <lightning-input
+                            name="profileName"
+                            label="Profile"
+                            type="search"
+                            onchange={handleChange}
+                        ></lightning-input>
+                    </lightning-layout-item>
+                    <lightning-layout-item if:true={optionVisible.type} size="12" small-device-size="12" medium-device-size={mediumDeviceSizeFilter} large-device-size={largeDeviceSizeFilter} padding="around-small">
+                        <lightning-input
+                            name="type"
+                            label="Type"
+                            type="search"
+                            onchange={handleChange}
+                        ></lightning-input>
+                    </lightning-layout-item>
+                    <lightning-layout-item if:true={optionVisible.severity} size="12" small-device-size="12" medium-device-size={mediumDeviceSizeFilter} large-device-size={largeDeviceSizeFilter} padding="around-small">
+                        <lightning-input
+                            name="severity"
+                            label="Severity"
+                            type="search"
+                            onchange={handleChange}
+                        ></lightning-input>
+                    </lightning-layout-item>
+                    <lightning-layout-item if:true={optionVisible.customApp} size="12" small-device-size="12" medium-device-size={mediumDeviceSizeFilter} large-device-size={largeDeviceSizeFilter} padding="around-small">
+                        <lightning-input
+                            name="customApp"
+                            label="Custom App"
+                            type="search"
+                            onchange={handleChange}
+                        ></lightning-input>
+                    </lightning-layout-item>
+                    <lightning-layout-item if:true={optionVisible.startDateTimeString} size="12" small-device-size="12" medium-device-size={mediumDeviceSizeFilter} large-device-size={largeDeviceSizeFilter} padding="around-small">
+                        <lightning-input
+                            name="startDateTimeString" 
+                            type="datetime" 
+                            onchange={handleChange}>
+                        </lightning-input>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </lightning-layout-item>
+        </lightning-layout>
+    </div>
+    <div class="slds-var-p-horizontal_large">
+        Show
+        <div style='width:70px; display:inline-block' class="slds-var-m-horizontal_small">
+            <lightning-combobox
+                name="recordsPerPage"
+                placeholder="Select Entries"
+                value={searchValues.recordsPerPage}
+                options={recordsPerPageOptions}
+                onchange={handleChange}>
+            </lightning-combobox>
+        </div>
+        entries
+    </div>
+</template>

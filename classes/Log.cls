@@ -1,48 +1,163 @@
 public with sharing class Log {
-    @AuraEnabled
-    public static LogResponse exception(String serializedException){
-        Log_Event__e event = new Log_Event__e();
-        event.User_Id__c = UserInfo.getUserId();
-        event.Exception__c = serializedException;
-        event.Message__c = null;
-        event.Is_Exception__c = true;
-        event.Is_Message__c = false;
-
-        Database.SaveResult dbResult = EventBus.publish(event);
-        return new logResponse(dbResult);
+    
+    public enum SEVERITY {
+        LOW, MEDIUM, HIGH, CRITICAL
     }
 
-    @AuraEnabled
-    public static LogResponse message(String message){
+    public enum SAVE_MODE {
+        ENABLED, DISABLED, BASED_ON_FLAG
+    }
+
+    public enum CUSTOM_APP {
+        STANDARD, MATRIX, HERMES, MELISSA, PARTNER, SERVICEPOWER, FLEXFI, COMMERCIAL, ALN
+    }
+
+    static final Boolean LOG_SAVE_FLAG; 
+
+    static {
+        LOG_SAVE_FLAG = true; //This will query a custom metadata or custom setting flag
+    }
+    
+    public static LogResponse exception(CustomHandledException ex, Log.SEVERITY severity, Log.CUSTOM_APP customApp, Log.SAVE_MODE saveMode){
+        Log_Event__e event = new Log_Event__e();
+        event.Severity__c = severity == null ? 'LOW' : severity.name();
+        event.Save_Mode__c = saveMode == null ? 'DISABLED' : saveMode.name();
+        event.Custom_App__c = customApp == null ? 'STANDARD' : customApp.name();
+    
+        event.User_Id__c = UserInfo.getUserId();
+        event.Exception__c = ex.getMessage();
+        event.Exception_Type__c = ex.exceptionType;
+
+        return isSaveLog(saveMode) ? publishLogEvent(event) : null;
+    }
+
+    public static LogResponse message(String message, Log.SAVE_MODE saveMode){
         Log_Event__e event = new Log_Event__e();
         event.User_Id__c = UserInfo.getUserId();
-        event.Exception__c = null;
         event.Message__c = message;
-        event.Is_Message__c = true;
-        event.Is_Exception__c = false;
-
-        Database.SaveResult dbResult = EventBus.publish(event);
-        return new logResponse(dbResult);
+        event.Exception_Type__c = 'System.Message';
+        event.Save_Mode__c = saveMode == null ? 'DISABLED' : saveMode.name();
+        
+        return isSaveLog(saveMode) ? publishLogEvent(event) : null;
     }
 
     @AuraEnabled
-    public static List<Log__c> getExceptionLogs(){
-        return [
-            SELECT 
-                Id, User__r.Name, User__r.Profile.Name, Exception__c,
-                Is_Exception__c, Message__c, Is_Message__c, CreatedDate
-            FROM Log__c
-            ORDER BY CreatedDate DESC
-            LIMIT 10
-        ];
+    public static LogResponse message(String message, String saveMode){
+        Log_Event__e event = new Log_Event__e();
+        event.User_Id__c = UserInfo.getUserId();
+        event.Message__c = message;
+        event.Exception_Type__c = 'System.Message';
+
+        try{
+            return isSaveLog(Log.SAVE_MODE.valueOf(saveMode)) ? publishLogEvent(event) : null;
+        } catch(Exception ex){
+            System.debug('@@@ Invalid save mode value for log.message method');
+            return null;
+        }
     }
+
+    private static Boolean isSaveLog(Log.SAVE_MODE saveMode){
+        return saveMode == Log.SAVE_MODE.ENABLED || (saveMode == Log.SAVE_MODE.BASED_ON_FLAG && LOG_SAVE_FLAG);
+    }
+
+    private static LogResponse publishLogEvent(Log_Event__e event){
+        Database.SaveResult dbResult = EventBus.publish(event);
+        LogResponse logResponse = new LogResponse(dbResult);
+        System.debug('Log response: ' + LogResponse);
+        return logResponse;
+    }
+
+    @AuraEnabled(cacheable=true)
+    public static List<Log__c> getExceptionLogs(
+        String Id,
+        String userName,
+        String profileName,
+        String type,
+        String severity,
+        String customApp,
+        String startDateTimeString,
+        String sortBy,
+        String sortDirection,
+        Integer pageNumber,
+        Integer recordsPerPage
+    ){
+
+        List<String> fields = new List<String>{
+            'Id', 
+            'User__r.Name', 
+            'User__r.Profile.Name', 
+            'Exception__c',
+            'Exception_Type__c',
+            'Message__c',
+            'Severity__c',
+            'Custom_App__c',
+            'CreatedDate'
+        };
+
+        String query = 'SELECT ' + String.join(fields,', ') + ' FROM Log__c WHERE';
+
+        query += getQueryCondition('Id', Id);
+        query += getQueryCondition('User__r.Name', userName);
+        query += getQueryCondition('User__r.Profile.Name', Id);
+        query += getQueryCondition('Exception_Type__c', type);
+        query += getQueryCondition('Severity__c', severity);
+        query += getQueryCondition('Custom_App__c', customApp);
+
+        if (String.isNotBlank(startDateTimeString)){
+            try {
+                JSON.deserialize('"' + startDateTimeString + '"', DateTime.class);
+                query += ' ( CreatedDate > ' + startDateTimeString + ' ) AND';
+            } catch(Exception ex){
+                System.debug('Invalid date input, not including the query condition');
+            }
+        }
+        
+        query = removeLastQueryTerm(query, ' AND');
+        query = removeLastQueryTerm(query, ' WHERE');
+
+        // query += ' ORDER BY CreatedDate DESC LIMIT 10';
+        System.debug('@@@ query: ' + query);
+        
+        // if ( String.isNotBlank(startDateTimeString) ) {
+        //     query += ' WHERE Id LIKE :%'+ startDateTimeString + '%';
+        // }
+
+        // if ( sortBy != null && sortDirection != null ) {
+        //     query += ' ORDER BY ' + sortBy + ' ' + sortDirection;
+        // }
+
+        return Database.query(query);
+    }
+
+    private static string getQueryCondition(String fieldName, String searchTerm){
+        if ( String.isBlank(searchTerm) ) {
+            return '';
+        }
+        
+        String condition = ' ( ';
+        for(String value : searchTerm.split(';')){
+            condition += fieldName + ' LIKE \'%'+ value.trim() + '%\' OR ';
+        }
+        condition = removeLastQueryTerm(condition, ' OR ');
+        condition += ' ) AND';
+        return condition;
+    }
+
+    private static string removeLastQueryTerm(String query, String term){
+        Integer termoPosition = query.lastIndexOf(term);
+        if( termoPosition == query.length() - term.length()){
+            query = query.substringBeforeLast(term);
+        }
+        return query;
+    }
+    
 
     @AuraEnabled
     public static void deleteLogs(){
         try {
             delete [SELECT Id FROM Log__c];
         } catch (DmlException ex) {
-            throw new CustomHandledException(ex, null);
+            throw new CustomHandledException(ex, null, null, Log.SAVE_MODE.BASED_ON_FLAG);
         }
     }
 

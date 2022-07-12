@@ -26,10 +26,6 @@ public virtual class CustomHandledException extends Exception{
      */
     public string message;
     /**
-     * @description Optional message of a thrown exception.
-     */
-    public string optionalMessage;
-    /**
      * @description List of DmlEx that contains the error information of each record
      */
     public List<DmlEx> dmlExceptions;
@@ -39,16 +35,15 @@ public virtual class CustomHandledException extends Exception{
      * won't display the full information of the exception, use the DmlException constructor instead.
      * 
      * @param ex Standard Exception that will be converted into a custom one.
-     * @param optionalMessage Optional or additional message that will be displayed to the user.
      */
-    public CustomHandledException(Exception ex, String optionalMessage) { //The optional message property helps to avoid duplicate constructors from the parent class
+    public CustomHandledException(Exception ex, Log.SEVERITY severity, Log.CUSTOM_APP customApp, Log.SAVE_MODE saveMode) {
         this.exceptionType = ex.getTypeName();
         this.stackTrace = ex.getStackTraceString();
         this.lineNumber = ex.getLineNumber();
         this.message = ex.getMessage();
-        this.optionalMessage = optionalMessage;
         this.dmlExceptions = null;
         setCustomMessage(JSON.serialize(this,true));
+        Log.exception(this, severity, customApp, saveMode);
     }
     
     /**
@@ -56,14 +51,12 @@ public virtual class CustomHandledException extends Exception{
      * caused the Dml Exception in the dmlExceptions property.
      * 
      * @param ex Standard Dml Exception that will be converted into a custom one. The type can be any kind of exception as it extends the Exception class.
-     * @param optionalMessage Optional or additional message that will be displayed to the user.
      */
-    public CustomHandledException(DmlException ex, String optionalMessage) {
+    public CustomHandledException(DmlException ex, Log.SEVERITY severity, Log.CUSTOM_APP customApp, Log.SAVE_MODE saveMode) {
         this.exceptionType = ex.getTypeName();
         this.stackTrace = ex.getStackTraceString();
         this.lineNumber = ex.getLineNumber();
         this.message = ex.getMessage();
-        this.optionalMessage = optionalMessage;
         this.dmlExceptions = new List<DmlEx>();
         
         DmlEx dmlEx;
@@ -76,7 +69,8 @@ public virtual class CustomHandledException extends Exception{
             dmlEx.statusCode = ex.getDmlStatusCode(i);
             dmlExceptions.add(dmlEx);
         }
-        setCustomMessage(JSON.serialize(this, true)); 
+        setCustomMessage(JSON.serialize(this, true));
+        Log.exception(this, severity, customApp, saveMode);
     }
 
     /**

@@ -23,8 +23,7 @@ public with sharing class CustomHandledExceptionExamples {
         try {
             throwDmlException();
         } catch (DmlException ex ) {
-            CustomHandledException customEx = new CustomHandledException(ex, 'Something that I want to pass to the client side');
-            Log.exception(customEx.getMessage());
+            CustomHandledException customEx = new CustomHandledException(ex, null, null, LOG.SAVE_MODE.ENABLED);
             throw customEx;
         }
     }
@@ -40,8 +39,7 @@ public with sharing class CustomHandledExceptionExamples {
         try {
             throwListException();
         } catch (Exception ex ) {
-            CustomHandledException customEx = new CustomHandledException(ex, 'Something that I want to pass to the client side');
-            Log.exception(customEx.getMessage());
+            CustomHandledException customEx = new CustomHandledException(ex, null, null, LOG.SAVE_MODE.ENABLED);
             throw customEx;
         }
     }
@@ -56,8 +54,7 @@ public with sharing class CustomHandledExceptionExamples {
         try {
             throwJSONException();
         } catch (Exception ex ) {
-            CustomHandledException customEx = new CustomHandledException(ex, null);
-            Log.exception(customEx.getMessage());
+            CustomHandledException customEx = new CustomHandledException(ex, null, null, LOG.SAVE_MODE.ENABLED);
             throw customEx;
         }
     }
@@ -78,8 +75,7 @@ public with sharing class CustomHandledExceptionExamples {
         try {
             throwLimitException();
         } catch (Exception ex ) {
-            CustomHandledException customEx = new CustomHandledException(ex, null);
-            Log.exception(customEx.getMessage());
+            CustomHandledException customEx = new CustomHandledException(ex, null, null, LOG.SAVE_MODE.ENABLED);
             throw customEx;
         }
     }
@@ -95,8 +91,7 @@ public with sharing class CustomHandledExceptionExamples {
         try {
             throwNullPointerException();
         } catch (Exception ex ) {
-            CustomHandledException customEx = new CustomHandledException(ex, null);
-            Log.exception(customEx.getMessage());
+            CustomHandledException customEx = new CustomHandledException(ex, null, null, LOG.SAVE_MODE.ENABLED);
             throw customEx;
         }
     }
@@ -111,8 +106,7 @@ public with sharing class CustomHandledExceptionExamples {
         try {
             throwQueryException();
         } catch (Exception ex ) {
-            CustomHandledException customEx = new CustomHandledException(ex, null);
-            Log.exception(customEx.getMessage());
+            CustomHandledException customEx = new CustomHandledException(ex, null, null, LOG.SAVE_MODE.ENABLED);
             throw customEx;
         }
     }

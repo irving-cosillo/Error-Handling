@@ -34,7 +34,6 @@ export default class ErrorHandlerExamples extends LightningElement {
     async handleClick({ target }){
         const index = target.value * 1;
         try{
-            console.clear();
             await this.functionArr[index]();
         } catch(errors){
             getErrorMessages(errors).forEach( message => {
