@@ -17,6 +17,7 @@ export default class LogSearch extends LightningElement {
     @api customApp;
     @api startDateTime;
     @api recordsPerPage;
+    @api numberOfPages;
 
     @track filtersVisibility = {
         id : false,
@@ -25,7 +26,7 @@ export default class LogSearch extends LightningElement {
         type : false,
         severity : true,
         customApp : false,
-        startDateTime : true
+        startDateTime : false
     } 
     
     recordsPerPageOptions = RECORDS_PER_PAGE_OPTIONS;
@@ -47,7 +48,7 @@ export default class LogSearch extends LightningElement {
         } else {
             return "4";
         }
-    } 
+    }
 
     handleChange({ target }){
         const {name, value } = target;
@@ -78,7 +79,8 @@ export default class LogSearch extends LightningElement {
                 severity : this.severity,
                 customApp : this.customApp,
                 startDateTime : this.startDateTime,
-                recordsPerPage : this.recordsPerPage
+                recordsPerPage : this.recordsPerPage,
+                pageNumber : 1
             }
         }));
     }

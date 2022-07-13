@@ -1,0 +1,22 @@
+<!-- sldsValidatorIgnore -->
+<template>
+    <div class="slds-align_absolute-center slds-var-m-top_small">
+        <lightning-button-icon
+            icon-name="utility:chevronleft"
+            variant="container"
+            disabled={previousDisabled}
+            onclick={handlePrevious}
+            class="slds-var-m-right_medium"
+            alternative-text="Previous">
+        </lightning-button-icon>
+        Page {pageNumber} of {numberOfPages}
+        <lightning-button-icon
+            icon-name="utility:chevronright"
+            variant="container"
+            disabled={nextDisabled}
+            onclick={handleNext}
+            class="slds-var-m-left_medium"
+            alternative-text="Next">
+        </lightning-button-icon>
+    </div>
+</template>

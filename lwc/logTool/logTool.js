@@ -2,8 +2,8 @@ import { LightningElement, wire } from 'lwc';
 import { getErrorMessages } from 'c/errorHandler';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { refreshApex } from '@salesforce/apex';
-import getExceptionLogs from '@salesforce/apex/Log.getExceptionLogs';
-import deleteLogs from '@salesforce/apex/Log.deleteLogs';
+import getLogs from '@salesforce/apex/Log.getLogs';
+import deleteAllLogs from '@salesforce/apex/Log.deleteAllLogs';
 
 export default class LogTool extends LightningElement {
     logs;
@@ -21,6 +21,7 @@ export default class LogTool extends LightningElement {
     customApp = '';
     startDateTime = '';
     
+    totalLogsNumber;
     pageNumber = 1;
     recordsPerPage = '10';
     sortBy = '';
@@ -41,7 +42,7 @@ export default class LogTool extends LightningElement {
         }}
     ];
 
-    @wire(getExceptionLogs, {
+    @wire(getLogs, {
         id : '$id',
         userName : '$userName',
         profileName : '$profileName',
@@ -57,13 +58,19 @@ export default class LogTool extends LightningElement {
         this.wireExceptionLogsValue = value;
         const { data, error } = value; 
         if (data) {
-            this.processLogs(data);
+            this.totalLogsNumber = data.totalLogsNumber;
+            this.processLogs(data.logsPerPage);
+            this.loading = false;
         } else if (error) {
             getErrorMessages(error).forEach(message => {
                 this.toastError(message);
             });
+            this.loading = false;
         }
-        this.loading = false;
+    }
+
+    get numberOfPages(){
+        return this.totalLogsNumber ? Math.ceil(this.totalLogsNumber / this.recordsPerPage) : 0;
     }
 
     processLogs(logs){
@@ -124,7 +131,8 @@ export default class LogTool extends LightningElement {
     async deleteAll(){
         try{
             this.loading = true;
-            await deleteLogs();
+            this.pageNumber = 1;
+            await deleteAllLogs();
             this.refresh();
         } catch(errors){
             getErrorMessages(errors).forEach(message => {
@@ -135,6 +143,7 @@ export default class LogTool extends LightningElement {
 
     refresh(){
         this.loading = true;
+        this.pageNumber = 1;
         refreshApex(this.wireExceptionLogsValue).finally(() => {
             this.loading = false;
         });
@@ -146,6 +155,11 @@ export default class LogTool extends LightningElement {
         Object.keys(searchValues).forEach(fieldName => {
             this[fieldName] = searchValues[fieldName];
         });
+    }
+
+    updatePageNumber({ detail }){
+        this.loading = true;
+        this.pageNumber = detail.pageNumber;
     }
 
     toastError(message){

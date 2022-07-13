@@ -13,6 +13,7 @@
                 custom-app={customApp}
                 start-date-time={startDateTime}
                 records-per-page={recordsPerPage}
+                number-of-pages={numberOfPages}
                 ondeleteall={deleteAll}
                 onrefresh={refresh}
                 onsearch={search}>
@@ -25,6 +26,7 @@
                     size="large"
                     alternative-text="Loading...">
                 </lightning-spinner>
+
                 <lightning-datatable
                     if:true={data} 
                     key-field="id"
@@ -33,6 +35,13 @@
                     onrowselection={handleSelectRow}
                     show-row-number-column>
                 </lightning-datatable>
+
+                <c-log-pagination
+                    if:true={numberOfPages}
+                    page-number={pageNumber}
+                    number-of-pages={numberOfPages}
+                    onupdatepagenumber={updatePageNumber}>
+                </c-log-pagination>
             </lightning-card>
         </div>
     </lightning-card>

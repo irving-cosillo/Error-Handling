@@ -68,7 +68,7 @@ public with sharing class Log {
     }
 
     @AuraEnabled(cacheable=true)
-    public static List<Log__c> getExceptionLogs(
+    public static LogRecordsResponse getLogs(
         String id,
         String userName,
         String profileName,
@@ -81,7 +81,6 @@ public with sharing class Log {
         Integer pageNumber,
         String recordsPerPage
     ){
-
         List<String> fields = new List<String>{
             'Id', 
             'User__r.Name', 
@@ -94,33 +93,41 @@ public with sharing class Log {
             'CreatedDate'
         };
 
-        String query = 'SELECT ' + String.join(fields,', ') + ' FROM Log__c WHERE';
+        String countStatement = 'SELECT COUNT(Id) total';
+        String selectStatement = 'SELECT ' + String.join(fields,', ');
+        String fromStatement = ' FROM Log__c';
 
-        query += getQueryCondition('Id', id);
-        query += getQueryCondition('User__r.Name', userName);
-        query += getQueryCondition('User__r.Profile.Name', profileName);
-        query += getQueryCondition('Exception_Type__c', type);
-        query += getQueryCondition('Severity__c', severity);
-        query += getQueryCondition('Custom_App__c', customApp);
+        String conditions = ' WHERE';
+        conditions += getQueryCondition('Id', id);
+        conditions += getQueryCondition('User__r.Name', userName);
+        conditions += getQueryCondition('User__r.Profile.Name', profileName);
+        conditions += getQueryCondition('Exception_Type__c', type);
+        conditions += getQueryCondition('Severity__c', severity);
+        conditions += getQueryCondition('Custom_App__c', customApp);
 
         if (String.isNotBlank(startDateTime)){
-            try {
-                JSON.deserialize('"' + startDateTime + '"', DateTime.class);
-                query += ' ( CreatedDate > ' + startDateTime + ' ) AND';
-            } catch(Exception ex){
-                System.debug('Invalid date input, not including the query condition');
-            }
+            JSON.deserialize('"' + startDateTime + '"', DateTime.class);
+            conditions += ' ( CreatedDate > ' + startDateTime + ' ) AND';
         }
         
-        query = removeLastQueryTerm(query, ' AND');
-        query = removeLastQueryTerm(query, ' WHERE');
+        conditions = removeLastQueryTerm(conditions, ' AND');
+        conditions = removeLastQueryTerm(conditions, ' WHERE');
+        
+        String orderByStatement = ' ORDER BY CreatedDate ' + sortDirection;
+        String limitStatement = ' LIMIT ' + recordsPerPage;
+        String offsetStatement = ' OFFSET ' + Integer.valueOf(recordsPerPage) * (pageNumber - 1);
 
-        // if ( sortBy != null && sortDirection != null ) {
-        //     query += ' ORDER BY ' + sortBy + ' ' + sortDirection;
-        // }
-            
-        System.debug('@@@ query: ' + query);
-        return Database.query(query);
+        String queryLogs = selectStatement + fromStatement + conditions + orderByStatement + limitStatement + offsetStatement;
+        String queryCount = countStatement + fromStatement + conditions;
+
+        LogRecordsResponse response = new LogRecordsResponse();
+        response.logsPerPage = Database.query(queryLogs);
+
+        List<AggregateResult> result = Database.query(queryCount);
+        response.totalLogsNumber = (Integer) result[0].get('total');
+
+        System.debug('@@@ getLogs response: ' + response);
+        return response;
     }
 
     private static string getQueryCondition(String fieldName, String searchTerm){
@@ -147,12 +154,19 @@ public with sharing class Log {
     
 
     @AuraEnabled
-    public static void deleteLogs(){
+    public static void deleteAllLogs(){
         try {
             delete [SELECT id FROM Log__c];
         } catch (DmlException ex) {
             throw new CustomHandledException(ex, null, null, Log.SAVE_MODE.BASED_ON_FLAG);
         }
+    }
+
+    public class LogRecordsResponse {
+        @AuraEnabled
+        public List<Log__c> logsPerPage;
+        @AuraEnabled
+        public Integer totalLogsNumber;
     }
 
     public class LogResponse {
@@ -187,3 +201,8 @@ public with sharing class Log {
         }
     }
 }
+
+
+// if ( sortBy != null && sortDirection != null ) {
+//     query += ' ORDER BY ' + sortBy + ' ' + sortDirection;
+// }
