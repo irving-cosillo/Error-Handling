@@ -1,110 +1,153 @@
 <!-- sldsValidatorIgnore -->
 <template>
-    <div class="slds-var-p-horizontal_large">
-        <lightning-layout multiple-rows pull-to-boundary="medium">
-            <lightning-layout-item size="12" small-device-size="12" medium-device-size="2" large-device-size="2" padding="horizontal-medium">
-                <div class="slds-card_boundary">
-                    <lightning-card title="Filters">
-                        <lightning-button-icon
-                            if:true={showFilters}
-                            onclick={toggleFilters}
-                            slot="actions"
-                            variant="bare"
-                            icon-name="utility:chevronup">
-                        </lightning-button-icon>
-                        <lightning-button-icon
-                            if:false={showFilters}
-                            onclick={toggleFilters}
-                            slot="actions"
-                            variant="bare"
-                            icon-name="utility:chevrondown">
-                        </lightning-button-icon>
-                        
-                        <lightning-checkbox-group
-                            if:true={showFilters}
-                            name="searchOptions"
-                            options={options}
-                            value={selectedOptions}
-                            onchange={handleChange}
-                            class="slds-var-m-left_medium">
-                        </lightning-checkbox-group>
+    <lightning-layout multiple-rows pull-to-boundary="small">
+        <lightning-layout-item if:true={filtersVisibility.id} size="12" small-device-size="12" medium-device-size={mediumDeviceSizeFilter} large-device-size={largeDeviceSizeFilter} padding="around-small">
+            <lightning-input
+                type="search"
+                label="Id"
+                name="id"
+                value={id}
+                onchange={handleChange}
+            ></lightning-input>
+        </lightning-layout-item>
+        <lightning-layout-item if:true={filtersVisibility.userName} size="12" small-device-size="12" medium-device-size={mediumDeviceSizeFilter} large-device-size={largeDeviceSizeFilter} padding="around-small">
+            <lightning-input
+                type="search"
+                label="User"
+                name="userName"
+                value={userName}
+                onchange={handleChange}
+            ></lightning-input>
+        </lightning-layout-item>
+        <lightning-layout-item if:true={filtersVisibility.profileName} size="12" small-device-size="12" medium-device-size={mediumDeviceSizeFilter} large-device-size={largeDeviceSizeFilter} padding="around-small">
+            <lightning-input
+                type="search"
+                label="Profile"
+                name="profileName"
+                value={profileName}
+                onchange={handleChange}
+            ></lightning-input>
+        </lightning-layout-item>
+        <lightning-layout-item if:true={filtersVisibility.type} size="12" small-device-size="12" medium-device-size={mediumDeviceSizeFilter} large-device-size={largeDeviceSizeFilter} padding="around-small">
+            <lightning-input
+                type="search"
+                label="Type"
+                name="type"
+                value={type}
+                onchange={handleChange}
+            ></lightning-input>
+        </lightning-layout-item>
+        <lightning-layout-item if:true={filtersVisibility.severity} size="12" small-device-size="12" medium-device-size={mediumDeviceSizeFilter} large-device-size={largeDeviceSizeFilter} padding="around-small">
+            <lightning-input
+                type="search"
+                label="Severity"
+                name="severity"
+                value={severity}
+                onchange={handleChange}
+            ></lightning-input>
+        </lightning-layout-item>
+        <lightning-layout-item if:true={filtersVisibility.customApp} size="12" small-device-size="12" medium-device-size={mediumDeviceSizeFilter} large-device-size={largeDeviceSizeFilter} padding="around-small">
+            <lightning-input
+                type="search"
+                label="Custom App"
+                name="customApp"
+                value={customApp}
+                onchange={handleChange}
+            ></lightning-input>
+        </lightning-layout-item>
+        <lightning-layout-item if:true={filtersVisibility.startDateTime} size="12" small-device-size="12" medium-device-size={mediumDeviceSizeFilter} large-device-size={largeDeviceSizeFilter} padding="around-small">
+            <lightning-input
+                type="datetime" 
+                name="startDateTime" 
+                value={startDateTime}
+                onchange={handleChange}>
+            </lightning-input>
+        </lightning-layout-item>
+    </lightning-layout>
 
-                        <div if:false={showFilters} style="height: 10px;"></div>
-                    </lightning-card>
-                </div>
-            </lightning-layout-item>
-            <lightning-layout-item size="12" small-device-size="12" medium-device-size="10" large-device-size="10" padding="horizontal-medium">
-                <lightning-layout multiple-rows pull-to-boundary="small">
-                    <lightning-layout-item if:true={optionVisible.Id} size="12" small-device-size="12" medium-device-size={mediumDeviceSizeFilter} large-device-size={largeDeviceSizeFilter} padding="around-small">
-                        <lightning-input
-                            name="Id"
-                            label="Id"
-                            type="search"
-                            onchange={handleChange}
-                        ></lightning-input>
-                    </lightning-layout-item>
-                    <lightning-layout-item if:true={optionVisible.userName} size="12" small-device-size="12" medium-device-size={mediumDeviceSizeFilter} large-device-size={largeDeviceSizeFilter} padding="around-small">
-                        <lightning-input
-                            name="userName"
-                            label="User"
-                            type="search"
-                            onchange={handleChange}
-                        ></lightning-input>
-                    </lightning-layout-item>
-                    <lightning-layout-item if:true={optionVisible.profileName} size="12" small-device-size="12" medium-device-size={mediumDeviceSizeFilter} large-device-size={largeDeviceSizeFilter} padding="around-small">
-                        <lightning-input
-                            name="profileName"
-                            label="Profile"
-                            type="search"
-                            onchange={handleChange}
-                        ></lightning-input>
-                    </lightning-layout-item>
-                    <lightning-layout-item if:true={optionVisible.type} size="12" small-device-size="12" medium-device-size={mediumDeviceSizeFilter} large-device-size={largeDeviceSizeFilter} padding="around-small">
-                        <lightning-input
-                            name="type"
-                            label="Type"
-                            type="search"
-                            onchange={handleChange}
-                        ></lightning-input>
-                    </lightning-layout-item>
-                    <lightning-layout-item if:true={optionVisible.severity} size="12" small-device-size="12" medium-device-size={mediumDeviceSizeFilter} large-device-size={largeDeviceSizeFilter} padding="around-small">
-                        <lightning-input
-                            name="severity"
-                            label="Severity"
-                            type="search"
-                            onchange={handleChange}
-                        ></lightning-input>
-                    </lightning-layout-item>
-                    <lightning-layout-item if:true={optionVisible.customApp} size="12" small-device-size="12" medium-device-size={mediumDeviceSizeFilter} large-device-size={largeDeviceSizeFilter} padding="around-small">
-                        <lightning-input
-                            name="customApp"
-                            label="Custom App"
-                            type="search"
-                            onchange={handleChange}
-                        ></lightning-input>
-                    </lightning-layout-item>
-                    <lightning-layout-item if:true={optionVisible.startDateTimeString} size="12" small-device-size="12" medium-device-size={mediumDeviceSizeFilter} large-device-size={largeDeviceSizeFilter} padding="around-small">
-                        <lightning-input
-                            name="startDateTimeString" 
-                            type="datetime" 
-                            onchange={handleChange}>
-                        </lightning-input>
-                    </lightning-layout-item>
-                </lightning-layout>
-            </lightning-layout-item>
-        </lightning-layout>
-    </div>
-    <div class="slds-var-p-horizontal_large">
-        Show
-        <div style='width:70px; display:inline-block' class="slds-var-m-horizontal_small">
+    <lightning-layout multiple-rows class="slds-var-m-top_small">
+        <lightning-layout-item>
+            <p style="display: inline-block;">
+                Show
+            </p>
             <lightning-combobox
+                style="display: inline-block;"
+                class="slds-var-m-horizontal_x-small"
+                variant="label-hidden"
                 name="recordsPerPage"
                 placeholder="Select Entries"
-                value={searchValues.recordsPerPage}
+                value={recordsPerPage}
                 options={recordsPerPageOptions}
                 onchange={handleChange}>
             </lightning-combobox>
-        </div>
-        entries
-    </div>
+            <p style="display: inline-block;">
+                entries
+            </p>
+        </lightning-layout-item>
+
+        <lightning-layout-item alignment-bump="left">
+            <lightning-button-icon
+                icon-name="utility:delete"    
+                alternative-text="Delete"
+                onclick={deleteAll}
+                tooltip="Delete All"
+                class="slds-var-m-right_small" 
+                title="Delete">
+            </lightning-button-icon>
+
+            <lightning-button-icon
+                icon-name="utility:refresh"    
+                alternative-text="Refresh"
+                tooltip="Refresh"
+                onclick={refresh}
+                class="slds-var-m-right_small"
+                title="Refresh">
+            </lightning-button-icon>
+
+            <lightning-button-menu tooltip="Search Filters"  menu-alignment="right" icon-name="utility:filterList">
+                <lightning-menu-item 
+                    label="Id"
+                    value="id"
+                    checked={filtersVisibility.id}
+                    onclick={handleFiltersChange}>
+                </lightning-menu-item>
+                <lightning-menu-item 
+                    label="User"
+                    value="userName"
+                    checked={filtersVisibility.userName}
+                    onclick={handleFiltersChange}>
+                </lightning-menu-item>
+                <lightning-menu-item 
+                    label="Profile"
+                    value="profileName"
+                    checked={filtersVisibility.profileName}
+                    onclick={handleFiltersChange}>
+                </lightning-menu-item>
+                <lightning-menu-item 
+                    label="Type"
+                    value="type"
+                    checked={filtersVisibility.type}
+                    onclick={handleFiltersChange}>
+                </lightning-menu-item>
+                <lightning-menu-item 
+                    label="Severity"
+                    value="severity"
+                    checked={filtersVisibility.severity}
+                    onclick={handleFiltersChange}>
+                </lightning-menu-item>
+                <lightning-menu-item 
+                    label="Custom Application"
+                    value="customApp"
+                    checked={filtersVisibility.customApp}
+                    onclick={handleFiltersChange}>
+                </lightning-menu-item>
+                <lightning-menu-item 
+                    label="Start Datetime"
+                    value="startDateTime"
+                    checked={filtersVisibility.startDateTime}
+                    onclick={handleFiltersChange}>
+                </lightning-menu-item>
+            </lightning-button-menu>
+        </lightning-layout-item>
+    </lightning-layout>
 </template>

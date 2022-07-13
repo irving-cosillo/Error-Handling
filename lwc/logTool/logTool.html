@@ -2,110 +2,48 @@
 <template>
     <c-error-handler-examples></c-error-handler-examples>
 
-    <div class="slds-var-m-bottom_medium">
-        <lightning-card >
-            <lightning-spinner 
-                if:true={loading}
-                variant="brand"
-                size="large"
-                alternative-text="Loading...">
-            </lightning-spinner>
-
+    <lightning-card>
+        <div class="slds-var-p-around_large">
             <c-log-search
-                onsearch={handleSearch}>
+                id={id}
+                user-name={userName}
+                profile-name={profileName}
+                type={type}
+                severity={severity}
+                custom-app={customApp}
+                start-date-time={startDateTime}
+                records-per-page={recordsPerPage}
+                ondeleteall={deleteAll}
+                onrefresh={refresh}
+                onsearch={search}>
             </c-log-search>
 
-            <div class="slds-var-p-around_large">
-                <div class="slds-clearfix">
-                    <div class="slds-float_right slds-var-m-bottom_medium">  
-                        <lightning-button-icon
-                            if:true={data} 
-                            icon-name="utility:delete"    
-                            alternative-text="Delete"
-                            onclick={handleDelete}
-                            class="slds-var-m-right_small" 
-                            title="Delete">
-                        </lightning-button-icon>
-                        <lightning-button-icon
-                            icon-name="utility:refresh"    
-                            alternative-text="Refresh"
-                            onclick={refreshLogs}
-                            title="Refresh">
-                        </lightning-button-icon>
-                    </div>
-                </div>
+            <lightning-card>
+                <lightning-spinner 
+                    if:true={loading}
+                    variant="brand"
+                    size="large"
+                    alternative-text="Loading...">
+                </lightning-spinner>
                 <lightning-datatable
                     if:true={data} 
-                    key-field="Id"
+                    key-field="id"
                     data={data}
                     columns={columns}
                     onrowselection={handleSelectRow}
                     show-row-number-column>
                 </lightning-datatable>
-            </div>
-        </lightning-card>
-    </div>
+            </lightning-card>
+        </div>
+    </lightning-card>
+
+    <div class="slds-var-m-bottom_medium"></div>
 
     <lightning-card if:true={selectedLog}>
         <div class="slds-var-p-around_large">
-            <div class="slds-var-p-bottom_small">
-                <b>Log Id: </b> {selectedLog.Id}
-            </div>
-            <div class="slds-var-p-bottom_small">
-                <b>User Name: </b> {selectedLog.userName}
-            </div>
-            <div class="slds-var-p-bottom_small">
-                <b>Profile: </b> {selectedLog.profileName}
-            </div>
-            <div class="slds-var-p-bottom_small">
-                <b>Type: </b> {selectedLog.type}
-            </div>
-            <div class="slds-var-p-bottom_small">
-                <b>Severity: </b> {selectedLog.severity}
-            </div>
-            <div class="slds-var-p-bottom_small">
-                <b>Custom App: </b> {selectedLog.customApp}
-            </div>
-            <div class="slds-var-p-bottom_small" if:true={selectedLog.message}>
-                <b>Message: </b> {selectedLog.message}
-            </div>
-            <div class="slds-var-p-bottom_small">
-                <b>Stack Trace: </b> {selectedLog.stackTrace}
-            </div>
-            <div class="slds-var-p-bottom_small">
-                <b>Line Number: </b> {selectedLog.lineNumber}
-            </div>
-            <div>
-                <b>Created Date: </b> 
-                <lightning-formatted-date-time 
-                    value={selectedLog.createdDate} 
-                    year="numeric" 
-                    month="numeric" 
-                    day="numeric" 
-                    hour="2-digit"
-                    minute="2-digit" 
-                    time-zone-name="short">
-                </lightning-formatted-date-time>
-            </div>
-            <template for:each={selectedLog.dmlExceptions} for:item="dmlException">
-                <div key={dmlException.Id} class="slds-var-p-horizontal_large slds-var-m-horizontal_large slds-var-p-top_small slds-border_bottom">
-                    <div class="slds-var-p-bottom_small" if:true={dmlException.Id}>
-                        <b>Id: </b> {dmlException.Id}
-                    </div>
-                    <div class="slds-var-p-bottom_small">
-                        <b>Index: </b> {dmlException.index}
-                    </div>
-                    <div class="slds-var-p-bottom_small">
-                        <b>Field Names: </b> {dmlException.fieldNames}
-                    </div>
-                    <div class="slds-var-p-bottom_small">
-                        <b>Message: </b> {dmlException.message}
-                    </div>
-                    <div class="slds-var-p-bottom_small">
-                        <b>Status Code: </b> {dmlException.statusCode}
-                    </div>
-                </div>
-            </template>
+            <c-log-information
+                selected-log={selectedLog}>
+            </c-log-information>
         </div>
     </lightning-card>
 </template>

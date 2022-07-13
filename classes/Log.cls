@@ -69,17 +69,17 @@ public with sharing class Log {
 
     @AuraEnabled(cacheable=true)
     public static List<Log__c> getExceptionLogs(
-        String Id,
+        String id,
         String userName,
         String profileName,
         String type,
         String severity,
         String customApp,
-        String startDateTimeString,
+        String startDateTime,
         String sortBy,
         String sortDirection,
         Integer pageNumber,
-        Integer recordsPerPage
+        String recordsPerPage
     ){
 
         List<String> fields = new List<String>{
@@ -96,17 +96,17 @@ public with sharing class Log {
 
         String query = 'SELECT ' + String.join(fields,', ') + ' FROM Log__c WHERE';
 
-        query += getQueryCondition('Id', Id);
+        query += getQueryCondition('Id', id);
         query += getQueryCondition('User__r.Name', userName);
-        query += getQueryCondition('User__r.Profile.Name', Id);
+        query += getQueryCondition('User__r.Profile.Name', profileName);
         query += getQueryCondition('Exception_Type__c', type);
         query += getQueryCondition('Severity__c', severity);
         query += getQueryCondition('Custom_App__c', customApp);
 
-        if (String.isNotBlank(startDateTimeString)){
+        if (String.isNotBlank(startDateTime)){
             try {
-                JSON.deserialize('"' + startDateTimeString + '"', DateTime.class);
-                query += ' ( CreatedDate > ' + startDateTimeString + ' ) AND';
+                JSON.deserialize('"' + startDateTime + '"', DateTime.class);
+                query += ' ( CreatedDate > ' + startDateTime + ' ) AND';
             } catch(Exception ex){
                 System.debug('Invalid date input, not including the query condition');
             }
@@ -115,17 +115,11 @@ public with sharing class Log {
         query = removeLastQueryTerm(query, ' AND');
         query = removeLastQueryTerm(query, ' WHERE');
 
-        // query += ' ORDER BY CreatedDate DESC LIMIT 10';
-        System.debug('@@@ query: ' + query);
-        
-        // if ( String.isNotBlank(startDateTimeString) ) {
-        //     query += ' WHERE Id LIKE :%'+ startDateTimeString + '%';
-        // }
-
         // if ( sortBy != null && sortDirection != null ) {
         //     query += ' ORDER BY ' + sortBy + ' ' + sortDirection;
         // }
-
+            
+        System.debug('@@@ query: ' + query);
         return Database.query(query);
     }
 
@@ -155,7 +149,7 @@ public with sharing class Log {
     @AuraEnabled
     public static void deleteLogs(){
         try {
-            delete [SELECT Id FROM Log__c];
+            delete [SELECT id FROM Log__c];
         } catch (DmlException ex) {
             throw new CustomHandledException(ex, null, null, Log.SAVE_MODE.BASED_ON_FLAG);
         }

@@ -62,7 +62,7 @@ public virtual class CustomHandledException extends Exception{
         DmlEx dmlEx;
         for(Integer i = 0; i < ex.getNumDml(); i++){
             dmlEx = new DmlEx();
-            dmlEx.Id = ex.getDmlId(i);
+            dmlEx.id = ex.getDmlId(i);
             dmlEx.index = ex.getDmlIndex(i);
             dmlEx.fieldNames = ex.getDmlFieldNames(i);
             dmlEx.message = ex.getDmlMessage(i);
@@ -86,9 +86,9 @@ public virtual class CustomHandledException extends Exception{
      */
     public class DmlEx {
         /**
-         * @description ID of the failed record that caused the error
+         * @description id of the failed record that caused the error
          */
-        public string Id;
+        public string id;
         /**
          * @description Index of the failed record
          */

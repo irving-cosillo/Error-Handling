@@ -5,30 +5,26 @@ import { refreshApex } from '@salesforce/apex';
 import getExceptionLogs from '@salesforce/apex/Log.getExceptionLogs';
 import deleteLogs from '@salesforce/apex/Log.deleteLogs';
 
-export default class LogTool extends LightningElement {    
-    
+export default class LogTool extends LightningElement {
     logs;
     data;
     selectedLog;
     subscription;
     wireExceptionLogsValue;
-    
     loading = true;
-    searchKey = '';
-    sortBy = '';
-    sortDirection = 'DESC';
-    startDateTimeString = '';
-    pageNumber = 1;
-    recordsPerPage = 10;
 
-    Id = '';
+    id = '';
     userName = '';
     profileName = '';
     type = '';
     severity = '';
     customApp = '';
-    startDateTimeString = '';
-    recordsPerPage = 10;
+    startDateTime = '';
+    
+    pageNumber = 1;
+    recordsPerPage = '10';
+    sortBy = '';
+    sortDirection = 'DESC';
 
     columns = [
         { label: 'User Name', fieldName: 'userName', type: 'text' },
@@ -46,13 +42,13 @@ export default class LogTool extends LightningElement {
     ];
 
     @wire(getExceptionLogs, {
-        Id : '$Id',
+        id : '$id',
         userName : '$userName',
         profileName : '$profileName',
         type : '$type',
         severity : '$severity',
         customApp : '$customApp',
-        startDateTimeString : '$startDateTimeString',
+        startDateTime : '$startDateTime',
         sortBy : '$sortBy',
         sortDirection : '$sortDirection',
         pageNumber : '$pageNumber',
@@ -78,7 +74,7 @@ export default class LogTool extends LightningElement {
                     createdDate : log.CreatedDate,
                     customApp : log.Custom_App__c,
                     type : log.Exception_Type__c,
-                    Id : log.Id,
+                    id : log.Id,
                     severity : log.Severity__c,
                     userName : log.User__r.Name,
                     profileName : log.User__r.Profile.Name,
@@ -118,18 +114,18 @@ export default class LogTool extends LightningElement {
             this.template.querySelector('lightning-datatable').selectedRows = [];
         } else if (selectedRows.length === 1) {
             this.selectedLog = selectedRows[0];
-            this.template.querySelector('lightning-datatable').selectedRows = [this.selectedLog.Id];
+            this.template.querySelector('lightning-datatable').selectedRows = [this.selectedLog.id];
         } else {
-            this.selectedLog = selectedRows.find( row => row.Id != this.selectedLog.Id);
-            this.template.querySelector('lightning-datatable').selectedRows = [this.selectedLog.Id];
+            this.selectedLog = selectedRows.find( row => row.id != this.selectedLog.id);
+            this.template.querySelector('lightning-datatable').selectedRows = [this.selectedLog.id];
         }
     }
 
-    async handleDelete(){
+    async deleteAll(){
         try{
             this.loading = true;
             await deleteLogs();
-            this.refreshLogs();
+            this.refresh();
         } catch(errors){
             getErrorMessages(errors).forEach(message => {
                 this.toastError(message);
@@ -137,20 +133,19 @@ export default class LogTool extends LightningElement {
         }
     }
 
-    refreshLogs(){
+    refresh(){
         this.loading = true;
-        refreshApex(this.wireExceptionLogsValue).finally(()=> {
+        refreshApex(this.wireExceptionLogsValue).finally(() => {
             this.loading = false;
         });
     }
 
-    handleSearch({ detail }){
+    search({ detail }){
+        this.loading = true;
         const searchValues = {...detail};
-        Object.keys(searchValues).forEach(optionName => {
-            this[optionName] = searchValues[optionName];
-        })
-        console.clear();
-        console.table(searchValues);
+        Object.keys(searchValues).forEach(fieldName => {
+            this[fieldName] = searchValues[fieldName];
+        });
     }
 
     toastError(message){
