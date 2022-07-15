@@ -10,8 +10,8 @@ const COLUMNS = [
     { label: 'User Name', fieldName: 'userName', type: 'text', sortable: true, wrapText: true},
     { label: 'User Profile', fieldName: 'profileName', type: 'text', sortable: true, wrapText: true },
     { label: 'Type', fieldName: 'type', type: 'text', sortable: true, wrapText: false },
-    { label: 'Severity', fieldName: 'severity', type: 'text', sortable: true, wrapText: false },
-    { label: 'Custom App', fieldName: 'customApp', type: 'text', sortable: true, wrapText: false },
+    { label: 'Severity', fieldName: 'severity', type: 'text', sortable: true, wrapText: false, initialWidth: 100 },
+    { label: 'Custom App', fieldName: 'customApp', type: 'text', sortable: true, wrapText: false, initialWidth: 125 },
     { label: 'Created Date', fieldName: 'createdDate', type: 'date', sortable: true, wrapText: true, 
         typeAttributes:{
             year: "numeric",

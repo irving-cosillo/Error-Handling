@@ -63,7 +63,7 @@ public with sharing class Log {
     private static LogResponse publishLogEvent(Log_Event__e event){
         Database.SaveResult dbResult = EventBus.publish(event);
         LogResponse logResponse = new LogResponse(dbResult);
-        System.debug('Log response: ' + LogResponse);
+        System.debug('@@@ Log response: ' + LogResponse);
         return logResponse;
     }
 
@@ -120,8 +120,6 @@ public with sharing class Log {
         String queryLogs = selectStatement + fromStatement + conditions + orderByStatement + limitStatement + offsetStatement;
         String queryCount = countStatement + fromStatement + conditions;
 
-        System.debug('@@@ sortBy: ' + sortBy);
-        System.debug('@@@ query: ' + queryLogs);
         LogRecordsResponse response = new LogRecordsResponse();
         response.logsPerPage = Database.query(queryLogs);
 
@@ -211,8 +209,3 @@ public with sharing class Log {
         }
     }
 }
-
-
-// if ( sortBy != null && sortDirection != null ) {
-//     query += ' ORDER BY ' + sortBy + ' ' + sortDirection;
-// }
