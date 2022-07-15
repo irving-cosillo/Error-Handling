@@ -14,5 +14,4 @@ trigger LogEventTrigger on Log_Event__e (after insert) {
     }
 
     insert logs;
-    EventBus.publish(new Log_Inserted_Event__e());
 }
