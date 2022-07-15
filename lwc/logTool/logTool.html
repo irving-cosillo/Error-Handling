@@ -14,6 +14,8 @@
                 start-date-time={startDateTime}
                 records-per-page={recordsPerPage}
                 number-of-pages={numberOfPages}
+                selected-rows={selectedRows}
+                ondeleteselected={deleteSelected}
                 ondeleteall={deleteAll}
                 onrefresh={refresh}
                 onsearch={search}>
@@ -32,8 +34,12 @@
                     key-field="id"
                     data={data}
                     columns={columns}
-                    onrowselection={handleSelectRow}
-                    show-row-number-column>
+                    onrowaction={handleRowAction}
+                    onrowselection={handleRowSelection}
+                    default-sort-direction={defaultSortDirection}
+                    sorted-direction={sortDirection}
+                    sorted-by={sortBy}
+                    onsort={handleSort}>
                 </lightning-datatable>
 
                 <c-log-pagination

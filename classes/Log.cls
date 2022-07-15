@@ -81,20 +81,20 @@ public with sharing class Log {
         Integer pageNumber,
         String recordsPerPage
     ){
-        List<String> fields = new List<String>{
-            'Id', 
-            'User__r.Name', 
-            'User__r.Profile.Name', 
-            'Exception__c',
-            'Exception_Type__c',
-            'Message__c',
-            'Severity__c',
-            'Custom_App__c',
-            'CreatedDate'
+        Map<String, String> fields = new Map<String, String>{
+            'id' => 'Id', 
+            'userName' => 'User__r.Name', 
+            'profileName' => 'User__r.Profile.Name', 
+            'exception' => 'Exception__c',
+            'type' => 'Exception_Type__c',
+            'message' => 'Message__c',
+            'severity' => 'Severity__c',
+            'customApp' => 'Custom_App__c',
+            'createdDate' => 'CreatedDate'
         };
 
         String countStatement = 'SELECT COUNT(Id) total';
-        String selectStatement = 'SELECT ' + String.join(fields,', ');
+        String selectStatement = 'SELECT ' + String.join(fields.values(),', ');
         String fromStatement = ' FROM Log__c';
 
         String conditions = ' WHERE';
@@ -113,13 +113,15 @@ public with sharing class Log {
         conditions = removeLastQueryTerm(conditions, ' AND');
         conditions = removeLastQueryTerm(conditions, ' WHERE');
         
-        String orderByStatement = ' ORDER BY CreatedDate ' + sortDirection;
+        String orderByStatement = ' ORDER BY ' + fields.get(sortBy) + ' ' + sortDirection;
         String limitStatement = ' LIMIT ' + recordsPerPage;
         String offsetStatement = ' OFFSET ' + Integer.valueOf(recordsPerPage) * (pageNumber - 1);
 
         String queryLogs = selectStatement + fromStatement + conditions + orderByStatement + limitStatement + offsetStatement;
         String queryCount = countStatement + fromStatement + conditions;
 
+        System.debug('@@@ sortBy: ' + sortBy);
+        System.debug('@@@ query: ' + queryLogs);
         LogRecordsResponse response = new LogRecordsResponse();
         response.logsPerPage = Database.query(queryLogs);
 
@@ -152,11 +154,19 @@ public with sharing class Log {
         return query;
     }
     
-
     @AuraEnabled
     public static void deleteAllLogs(){
         try {
             delete [SELECT id FROM Log__c];
+        } catch (DmlException ex) {
+            throw new CustomHandledException(ex, null, null, Log.SAVE_MODE.BASED_ON_FLAG);
+        }
+    }
+
+    @AuraEnabled
+    public static void deleteSelectedLogs(List<String> logIds){
+        try {
+            delete [SELECT id FROM Log__c WHERE Id IN : logIds];
         } catch (DmlException ex) {
             throw new CustomHandledException(ex, null, null, Log.SAVE_MODE.BASED_ON_FLAG);
         }

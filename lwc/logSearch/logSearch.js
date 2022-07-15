@@ -18,6 +18,7 @@ export default class LogSearch extends LightningElement {
     @api startDateTime;
     @api recordsPerPage;
     @api numberOfPages;
+    @api selectedRows;
 
     @track filtersVisibility = {
         id : false,
@@ -85,8 +86,12 @@ export default class LogSearch extends LightningElement {
         }));
     }
 
-    deleteAll(){
+    deleteAllLogs(){
         this.dispatchEvent( new CustomEvent('deleteall'));
+    }
+
+    deleteSelectedLogs(){
+        this.dispatchEvent( new CustomEvent('deleteselected'));
     }
 
     refresh(){

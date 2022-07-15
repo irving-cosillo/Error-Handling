@@ -87,15 +87,6 @@
 
         <lightning-layout-item alignment-bump="left">
             <lightning-button-icon
-                icon-name="utility:delete"    
-                alternative-text="Delete"
-                onclick={deleteAll}
-                tooltip="Delete All"
-                class="slds-var-m-right_small" 
-                title="Delete">
-            </lightning-button-icon>
-
-            <lightning-button-icon
                 icon-name="utility:refresh"    
                 alternative-text="Refresh"
                 tooltip="Refresh"
@@ -103,6 +94,18 @@
                 class="slds-var-m-right_small"
                 title="Refresh">
             </lightning-button-icon>
+
+            <lightning-button-menu tooltip="Delete Log Options"  menu-alignment="right" icon-name="utility:delete" class="slds-var-m-right_small">
+                <lightning-menu-item 
+                    label="Delete All"
+                    onclick={deleteAllLogs}>
+                </lightning-menu-item>
+                <lightning-menu-item
+                    if:true={selectedRows}
+                    label="Delete Selected"
+                    onclick={deleteSelectedLogs}>
+                </lightning-menu-item>
+            </lightning-button-menu>
 
             <lightning-button-menu tooltip="Search Filters"  menu-alignment="right" icon-name="utility:filterList">
                 <lightning-menu-item 

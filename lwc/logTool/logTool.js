@@ -4,14 +4,44 @@ import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { refreshApex } from '@salesforce/apex';
 import getLogs from '@salesforce/apex/Log.getLogs';
 import deleteAllLogs from '@salesforce/apex/Log.deleteAllLogs';
+import deleteSelectedLogs from '@salesforce/apex/Log.deleteSelectedLogs';
+
+const COLUMNS = [
+    { label: 'User Name', fieldName: 'userName', type: 'text', sortable: true, wrapText: true},
+    { label: 'User Profile', fieldName: 'profileName', type: 'text', sortable: true, wrapText: true },
+    { label: 'Type', fieldName: 'type', type: 'text', sortable: true, wrapText: false },
+    { label: 'Severity', fieldName: 'severity', type: 'text', sortable: true, wrapText: false },
+    { label: 'Custom App', fieldName: 'customApp', type: 'text', sortable: true, wrapText: false },
+    { label: 'Created Date', fieldName: 'createdDate', type: 'date', sortable: true, wrapText: true, 
+        typeAttributes:{
+            year: "numeric",
+            month: "long",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit"
+        }
+    },
+    {
+        fixedWidth : 50,
+        type: 'button-icon',
+        typeAttributes: {
+            name: 'preview',
+            iconName: 'utility:preview',
+            title: 'Preview',
+            variant: 'bare',
+            alternativeText: 'Preview'
+        }
+    }
+];
 
 export default class LogTool extends LightningElement {
-    logs;
     data;
     selectedLog;
-    subscription;
+    selectedRows;
     wireExceptionLogsValue;
     loading = true;
+    columns = COLUMNS;
 
     id = '';
     userName = '';
@@ -24,23 +54,9 @@ export default class LogTool extends LightningElement {
     totalLogsNumber;
     pageNumber = 1;
     recordsPerPage = '10';
-    sortBy = '';
-    sortDirection = 'DESC';
-
-    columns = [
-        { label: 'User Name', fieldName: 'userName', type: 'text' },
-        { label: 'User Profile', fieldName: 'profileName', type: 'text' },
-        { label: 'Type', fieldName: 'type', type: 'text' },
-        { label: 'Severity', fieldName: 'severity', type: 'text' },
-        { label: 'Custom App', fieldName: 'customApp', type: 'text' },
-        { label: 'Created Date', fieldName: 'createdDate', type: 'date', typeAttributes:{
-            year: "numeric",
-            month: "long",
-            day: "2-digit",
-            hour: "2-digit",
-            minute: "2-digit"
-        }}
-    ];
+    sortBy = 'createdDate';
+    sortDirection = 'desc';
+    defaultSortDirection = 'desc';
 
     @wire(getLogs, {
         id : '$id',
@@ -75,8 +91,7 @@ export default class LogTool extends LightningElement {
 
     processLogs(logs){
         try {
-            this.logs = logs;
-            this.data = this.logs.length ? this.logs.map( log => {
+            this.data = logs.length ? logs.map( log => {
                 const row = {
                     createdDate : log.CreatedDate,
                     customApp : log.Custom_App__c,
@@ -114,25 +129,25 @@ export default class LogTool extends LightningElement {
         }
     }
 
-    handleSelectRow({ detail }){
-        const selectedRows = [...detail.selectedRows];
-        if(selectedRows.length === 0 || selectedRows.length > 2){
-            this.selectedLog = undefined;
-            this.template.querySelector('lightning-datatable').selectedRows = [];
-        } else if (selectedRows.length === 1) {
-            this.selectedLog = selectedRows[0];
-            this.template.querySelector('lightning-datatable').selectedRows = [this.selectedLog.id];
-        } else {
-            this.selectedLog = selectedRows.find( row => row.id != this.selectedLog.id);
-            this.template.querySelector('lightning-datatable').selectedRows = [this.selectedLog.id];
-        }
-    }
-
     async deleteAll(){
         try{
             this.loading = true;
-            this.pageNumber = 1;
             await deleteAllLogs();
+            this.pageNumber = 1;
+            this.refresh();
+        } catch(errors){
+            getErrorMessages(errors).forEach(message => {
+                this.toastError(message);
+            });
+        }
+    }
+
+    async deleteSelected(){
+        try{
+            this.loading = true;
+            const logIds = this.template.querySelector('lightning-datatable').selectedRows;
+            await deleteSelectedLogs({ logIds });
+            this.pageNumber = 1;
             this.refresh();
         } catch(errors){
             getErrorMessages(errors).forEach(message => {
@@ -160,6 +175,28 @@ export default class LogTool extends LightningElement {
     updatePageNumber({ detail }){
         this.loading = true;
         this.pageNumber = detail.pageNumber;
+    }
+
+    handleRowAction({ detail }) {
+        const { action, row } = detail;
+        if(action.name === 'preview'){
+            this.selectedLog = row;
+        } else if (action.name === 'delete'){
+            this.deleteLog(row.id);
+        }
+    }
+
+    handleSort({ detail }){
+        const { fieldName, sortDirection } = detail;
+        
+        this.loading = true;
+        this.pageNumber = 1;
+        this.sortBy = fieldName;
+        this.sortDirection = sortDirection;
+    }
+
+    handleRowSelection({ detail }){
+        this.selectedRows = detail.selectedRows;
     }
 
     toastError(message){
