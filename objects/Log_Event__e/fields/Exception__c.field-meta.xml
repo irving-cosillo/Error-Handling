@@ -8,5 +8,5 @@
     <label>Exception</label>
     <length>50000</length>
     <type>LongTextArea</type>
-    <visibleLines>10</visibleLines>
+    <visibleLines>6</visibleLines>
 </CustomField>
