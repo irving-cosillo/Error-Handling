@@ -1,6 +1,5 @@
 public with sharing class CustomHandledExceptionExamples {
-    @AuraEnabled
-    public static void throwDmlException() {
+    private static void throwDmlException() {
         // For this example, the Contact object has a Birthdate validation and a Gender__c require field. Add this to your org 
         // and run the following script to insert the record.
 
@@ -18,49 +17,16 @@ public with sharing class CustomHandledExceptionExamples {
         }
     }
 
-    @AuraEnabled
-    public static void throwCustomHandledDmlException() {
-        try {
-            throwDmlException();
-        } catch (DmlException ex ) {
-            CustomHandledException customEx = new CustomHandledException(ex, null, null, LOG.SAVE_MODE.ENABLED);
-            throw customEx;
-        }
-    }
-
-    @AuraEnabled
-    public static void throwListException() {
+    private static void throwListException() {
         List<Integer> integerList = new List<Integer>();
         Integer integerValue = integerList[1];
     }
 
-    @AuraEnabled
-    public static void throwCustomHandledListException() {
-        try {
-            throwListException();
-        } catch (Exception ex ) {
-            CustomHandledException customEx = new CustomHandledException(ex, null, null, LOG.SAVE_MODE.ENABLED);
-            throw customEx;
-        }
-    }
-
-    @AuraEnabled
-    public static void throwJSONException() {
+    private static void throwJSONException() {
         Object parse = JSON.deserializeUntyped('{sd ..');
     }
 
-    @AuraEnabled
-    public static void throwCustomHandledJSONException() {
-        try {
-            throwJSONException();
-        } catch (Exception ex ) {
-            CustomHandledException customEx = new CustomHandledException(ex, null, null, LOG.SAVE_MODE.ENABLED);
-            throw customEx;
-        }
-    }
-
-    @AuraEnabled
-    public static void throwLimitException() {
+    private static void throwLimitException() {
         for(Integer i = 0; i < 160; i++ ){
             Contact contact = new Contact();
             contact.LastName = 'Test ';
@@ -70,44 +36,59 @@ public with sharing class CustomHandledExceptionExamples {
         }
     }
 
-    @AuraEnabled
-    public static void throwCustomHandledLimitException() {
-        try {
-            throwLimitException();
-        } catch (Exception ex ) {
-            CustomHandledException customEx = new CustomHandledException(ex, null, null, LOG.SAVE_MODE.ENABLED);
-            throw customEx;
-        }
-    }
-
-    @AuraEnabled
-    public static void throwNullPointerException() {
+    private static void throwNullPointerException() {
         String a = null;
         Boolean b = a.contains(a);
     }
 
-    @AuraEnabled
-    public static void throwCustomHandledNullPointerException() {
-        try {
-            throwNullPointerException();
-        } catch (Exception ex ) {
-            CustomHandledException customEx = new CustomHandledException(ex, null, null, LOG.SAVE_MODE.ENABLED);
-            throw customEx;
-        }
-    }
-
-    @AuraEnabled
-    public static void throwQueryException() {
+    private static void throwQueryException() {
         Account account = [SELECT Id FROM Account WHERE Name = 'sdfsdf'];
     }
 
     @AuraEnabled
-    public static void throwCustomHandledQueryException() {
+    public static void throwException(Boolean isCustomHandledException, String exceptionName, String customUserMessage, String severityString, String saveModeString, String customAppString) {
+        if(!isCustomHandledException){
+            throwException(exceptionName);
+        }
+
+        //As aura exposed methods does not allowed passing enums as arguments, we are going to use this block of code to simulate it.
+        Log.SEVERITY severity = String.isBlank(severityString) ? null : Log.SEVERITY.valueOf(severityString);
+        Log.SAVE_MODE saveMode = String.isBlank(saveModeString) ? null :  Log.SAVE_MODE.valueOf(saveModeString);
+        Log.CUSTOM_APP customApp = String.isBlank(customAppString) ? null :  Log.CUSTOM_APP.valueOf(customAppString);
+
         try {
-            throwQueryException();
-        } catch (Exception ex ) {
-            CustomHandledException customEx = new CustomHandledException(ex, null, null, LOG.SAVE_MODE.ENABLED);
+            throwException(exceptionName);
+        } catch (DmlException ex ) {
+            CustomHandledException customEx = new CustomHandledException(ex, customUserMessage);
+            Log.exception(customEx, severity, saveMode, customApp);
             throw customEx;
+        } catch (Exception ex ) {
+            CustomHandledException customEx = new CustomHandledException(ex, customUserMessage);
+            Log.exception(customEx, severity, saveMode, customApp);
+            throw customEx;
+        }
+    }
+
+    private static void throwException(String exceptionName){
+        switch on exceptionName {
+            when 'DML' {
+                throwDmlException();
+            }	
+            when 'List' {
+                throwListException();
+            }
+            when 'JSON' {
+                throwJSONException();
+            }
+            when 'Limit' {
+                throwLimitException();
+            }
+            when 'NullPointer' {
+                throwNullPointerException();
+            }
+            when 'Query' {
+                throwQueryException();
+            }
         }
     }
 }

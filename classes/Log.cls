@@ -5,68 +5,120 @@ public with sharing class Log {
     }
 
     public enum SAVE_MODE {
-        ENABLED, DISABLED, BASED_ON_FLAG
+        ALWAYS, FLAG_BASED
     }
 
     public enum CUSTOM_APP {
         STANDARD, MATRIX, HERMES, MELISSA, PARTNER, SERVICEPOWER, FLEXFI, COMMERCIAL, ALN
     }
 
-    static final Boolean LOG_SAVE_FLAG; 
+    static final Boolean SAVE_LOGS_FLAG; 
 
     static {
-        LOG_SAVE_FLAG = true; //This will query a custom metadata or custom setting flag
+        SAVE_LOGS_FLAG = Log_Settings__c.getInstance()?.Save_Logs_Flag__c;
+    }
+
+    //#region  ---------- Exception Constructors ----------------
+    public static LogResponse exception(CustomHandledException ex){
+        return exception(ex, null, null, null);
+    }
+
+    public static LogResponse exception(CustomHandledException ex, Log.SEVERITY severity){
+        return exception(ex, severity, null, null);
+    }
+
+    public static LogResponse exception(CustomHandledException ex, Log.SEVERITY severity, Log.SAVE_MODE saveMode){
+        return exception(ex, severity, saveMode, null );
     }
     
-    public static LogResponse exception(CustomHandledException ex, Log.SEVERITY severity, Log.CUSTOM_APP customApp, Log.SAVE_MODE saveMode){
+    public static LogResponse exception(CustomHandledException ex, Log.SEVERITY severity, Log.SAVE_MODE saveMode, Log.CUSTOM_APP customApp){
         Log_Event__e event = new Log_Event__e();
-        event.Severity__c = severity == null ? 'LOW' : severity.name();
-        event.Save_Mode__c = saveMode == null ? 'DISABLED' : saveMode.name();
-        event.Custom_App__c = customApp == null ? 'STANDARD' : customApp.name();
+        event.Severity__c = severity == null ? Log.SEVERITY.LOW.name() : severity.name();
+        event.Save_Mode__c = saveMode == null ? Log.SAVE_MODE.FLAG_BASED.name() : saveMode.name();
+        event.Custom_App__c = customApp == null ? Log.CUSTOM_APP.STANDARD.name() : customApp.name();
     
         event.User_Id__c = UserInfo.getUserId();
         event.Exception__c = ex.getMessage();
         event.Exception_Type__c = ex.exceptionType;
 
-        return isSaveLog(saveMode) ? publishLogEvent(event) : null;
+        return saveLog(event);
     }
+    //#endregion
+    
+    //#region  ---------- Private Constructor Methods -----------
+    private static LogResponse saveLog(Log_Event__e event){
+        Boolean isCriticalLog = event.Severity__c == Log.SEVERITY.CRITICAL.name();
+        Boolean isAlwaysSave = event.Save_Mode__c == Log.SAVE_MODE.ALWAYS.name();
+        Boolean isFlagBasedSave = event.Save_Mode__c == Log.SAVE_MODE.FLAG_BASED.name() && SAVE_LOGS_FLAG;
+        Boolean isSaveLog = isAlwaysSave || isFlagBasedSave || isCriticalLog;
 
-    public static LogResponse message(String message, Log.SAVE_MODE saveMode){
-        Log_Event__e event = new Log_Event__e();
-        event.User_Id__c = UserInfo.getUserId();
-        event.Message__c = message;
-        event.Exception_Type__c = 'System.Message';
-        event.Save_Mode__c = saveMode == null ? 'DISABLED' : saveMode.name();
-        
-        return isSaveLog(saveMode) ? publishLogEvent(event) : null;
-    }
-
-    @AuraEnabled
-    public static LogResponse message(String message, String saveMode){
-        Log_Event__e event = new Log_Event__e();
-        event.User_Id__c = UserInfo.getUserId();
-        event.Message__c = message;
-        event.Exception_Type__c = 'System.Message';
-
-        try{
-            return isSaveLog(Log.SAVE_MODE.valueOf(saveMode)) ? publishLogEvent(event) : null;
-        } catch(Exception ex){
-            System.debug('@@@ Invalid save mode value for log.message method');
+        if(!isSaveLog){
             return null;
         }
-    }
 
-    private static Boolean isSaveLog(Log.SAVE_MODE saveMode){
-        return saveMode == Log.SAVE_MODE.ENABLED || (saveMode == Log.SAVE_MODE.BASED_ON_FLAG && LOG_SAVE_FLAG);
-    }
-
-    private static LogResponse publishLogEvent(Log_Event__e event){
         Database.SaveResult dbResult = EventBus.publish(event);
         LogResponse logResponse = new LogResponse(dbResult);
-        System.debug('@@@ Log response: ' + LogResponse);
+
         return logResponse;
     }
 
+    private static String getSaveModeString(Log.SAVE_MODE saveMode){
+        return saveMode == null ? Log.SAVE_MODE.FLAG_BASED.name() : saveMode.name(); 
+    }
+
+    private static String getSaveModeString(String saveModeString){
+        try{
+            Log.SAVE_MODE saveMode = Log.SAVE_MODE.valueOf(saveModeString);
+            return saveMode == null ? Log.SAVE_MODE.FLAG_BASED.name() : saveModeString; 
+        } catch(Exception ex){
+            throw new CustomHandledException('Invalid save mode value for Log.message method');
+        }
+    }
+
+    private static LogResponse saveGenericMessage(String message, String exceptionType, String saveModeString){
+        Log_Event__e event = new Log_Event__e();
+        event.User_Id__c = UserInfo.getUserId();
+        event.Message__c = message;
+        event.Exception_Type__c = exceptionType;
+        event.Save_Mode__c = saveModeString;
+        return saveLog(event);
+    }
+    //#endregion
+
+    //#region  ---------- Message Constructors ------------------
+    public static LogResponse message(String message, Log.SAVE_MODE saveMode){
+        return saveGenericMessage(message, 'System.Message', getSaveModeString(saveMode));
+    }
+
+    @AuraEnabled
+    public static LogResponse message(String message, String saveModeString){
+        return saveGenericMessage(message, 'System.Message', getSaveModeString(saveModeString));
+    }
+    //#endregion
+
+    //#region  ---------- JSON Object Constructors --------------
+    public static LogResponse jsonObject(Object obj, Log.SAVE_MODE saveMode){
+        return saveGenericMessage(JSON.serialize(obj), 'System.JSON', getSaveModeString(saveMode));
+    }
+
+    @AuraEnabled
+    public static LogResponse jsonObject(Object obj, String saveMode){
+        return saveGenericMessage(JSON.serialize(obj), 'System.JSON', getSaveModeString(saveMode));
+    }
+    //#endregion
+
+    //#region  ---------- JSON Object List Constructors ---------
+    public static LogResponse jsonObjectList(List<Object> objList, Log.SAVE_MODE saveMode){
+        return saveGenericMessage(JSON.serialize(objList), 'System.JSON', getSaveModeString(saveMode));
+    }
+
+    @AuraEnabled
+    public static LogResponse jsonObjectList(List<Object> objList, String saveMode){
+        return saveGenericMessage(JSON.serialize(objList), 'System.JSON', getSaveModeString(saveMode));
+    }
+    //#endregion
+
+    //#region  ---------- Log Tool LWC Exposed Methods ----------
     @AuraEnabled(cacheable=true)
     public static LogRecordsResponse getLogs(
         String id,
@@ -157,7 +209,7 @@ public with sharing class Log {
         try {
             delete [SELECT id FROM Log__c];
         } catch (DmlException ex) {
-            throw new CustomHandledException(ex, null, null, Log.SAVE_MODE.BASED_ON_FLAG);
+            throw new CustomHandledException(ex, null);
         }
     }
 
@@ -166,10 +218,12 @@ public with sharing class Log {
         try {
             delete [SELECT id FROM Log__c WHERE Id IN : logIds];
         } catch (DmlException ex) {
-            throw new CustomHandledException(ex, null, null, Log.SAVE_MODE.BASED_ON_FLAG);
+            throw new CustomHandledException(ex, null);
         }
     }
+    //#endregion
 
+    //#region  ---------- Response Wrapper Classes --------------
     public class LogRecordsResponse {
         @AuraEnabled
         public List<Log__c> logsPerPage;
@@ -179,12 +233,16 @@ public with sharing class Log {
 
     public class LogResponse {
         @AuraEnabled
+        public String operationId;
+        @AuraEnabled
         public Boolean isSuccess;
         @AuraEnabled
         public List<LogError> errors;
 
         public LogResponse(Database.SaveResult dbResult){
             this.isSuccess = dbResult.isSuccess();
+            this.operationId = EventBus.getOperationId(dbResult);
+
             if (!this.isSuccess){
                 errors = new List<LogError>();
                 for(Database.Error dbError : dbResult.getErrors()){
@@ -208,4 +266,5 @@ public with sharing class Log {
             this.statusCode = dbError.getStatusCode();
         }
     }
+    //#endregion
 }

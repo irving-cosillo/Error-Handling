@@ -22,9 +22,13 @@ public virtual class CustomHandledException extends Exception{
      */
     public Integer lineNumber;
     /**
-     * @description Error message that displays for the user
+     * @description System Default Error message.
      */
     public string message;
+    /**
+     * @description Error message that will be displayed to the user, if this value is null it will display the default exception message.
+     */
+    public string customUserMessage;
     /**
      * @description List of DmlEx that contains the error information of each record
      */
@@ -35,15 +39,17 @@ public virtual class CustomHandledException extends Exception{
      * won't display the full information of the exception, use the DmlException constructor instead.
      * 
      * @param ex Standard Exception that will be converted into a custom one.
+     * @param customUserMessage Error message that will be displayed to the user, if this value is null it will display the default exception message.
      */
-    public CustomHandledException(Exception ex, Log.SEVERITY severity, Log.CUSTOM_APP customApp, Log.SAVE_MODE saveMode) {
+    public CustomHandledException(Exception ex, String customUserMessage) {
         this.exceptionType = ex.getTypeName();
         this.stackTrace = ex.getStackTraceString();
         this.lineNumber = ex.getLineNumber();
         this.message = ex.getMessage();
+        this.customUserMessage = customUserMessage;
         this.dmlExceptions = null;
+
         setCustomMessage(JSON.serialize(this,true));
-        Log.exception(this, severity, customApp, saveMode);
     }
     
     /**
@@ -51,14 +57,16 @@ public virtual class CustomHandledException extends Exception{
      * caused the Dml Exception in the dmlExceptions property.
      * 
      * @param ex Standard Dml Exception that will be converted into a custom one. The type can be any kind of exception as it extends the Exception class.
+     * @param customUserMessage Error message that will be displayed to the user, if this value is null it will display the default exception message.
      */
-    public CustomHandledException(DmlException ex, Log.SEVERITY severity, Log.CUSTOM_APP customApp, Log.SAVE_MODE saveMode) {
+    public CustomHandledException(DmlException ex, String customUserMessage) {
         this.exceptionType = ex.getTypeName();
         this.stackTrace = ex.getStackTraceString();
         this.lineNumber = ex.getLineNumber();
         this.message = ex.getMessage();
+        this.customUserMessage = customUserMessage;
         this.dmlExceptions = new List<DmlEx>();
-        
+
         DmlEx dmlEx;
         for(Integer i = 0; i < ex.getNumDml(); i++){
             dmlEx = new DmlEx();
@@ -69,8 +77,8 @@ public virtual class CustomHandledException extends Exception{
             dmlEx.statusCode = ex.getDmlStatusCode(i);
             dmlExceptions.add(dmlEx);
         }
+
         setCustomMessage(JSON.serialize(this, true));
-        Log.exception(this, severity, customApp, saveMode);
     }
 
     /**

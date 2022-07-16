@@ -2,28 +2,93 @@
     <div class="slds-var-m-bottom_medium">
         <lightning-card>
             <div class="slds-var-p-around_medium">
-                <h2 class="slds-text-heading_small slds-var-m-bottom_small slds-align_absolute-center">
-                    Standard Exceptions
-                </h2>
-                <div class="slds-align_absolute-center">
-                    <lightning-button variant="Neutral" label="Dml" value="0" onclick={handleClick} class="slds-var-m-left_x-small"></lightning-button>
-                    <lightning-button variant="Neutral" label="List" value="1" onclick={handleClick} class="slds-var-m-left_x-small"></lightning-button>
-                    <lightning-button variant="Neutral" label="JSON" value="2" onclick={handleClick} class="slds-var-m-left_x-small"></lightning-button>
-                    <lightning-button variant="Neutral" label="Query" value="3" onclick={handleClick} class="slds-var-m-left_x-small"></lightning-button>
-                    <lightning-button variant="Neutral" label="Limit" value="4" onclick={handleClick} class="slds-var-m-left_x-small"></lightning-button>
-                    <lightning-button variant="Neutral" label="Null Pointer" value="5" onclick={handleClick} class="slds-var-m-left_x-small"></lightning-button>
-                </div>
-                <h2 class="slds-text-heading_small slds-var-m-bottom_small slds-var-m-top_medium slds-align_absolute-center">
-                    Custom Handled Exceptions
-                </h2>
-                <div class="slds-align_absolute-center slds-var-m-bottom_medium">
-                    <lightning-button variant="Brand" label="Dml" value="6" onclick={handleClick} class="slds-var-m-left_x-small"></lightning-button>
-                    <lightning-button variant="Brand" label="List" value="7" onclick={handleClick} class="slds-var-m-left_x-small"></lightning-button>
-                    <lightning-button variant="Brand" label="JSON" value="8" onclick={handleClick} class="slds-var-m-left_x-small"></lightning-button>
-                    <lightning-button variant="Brand" label="Query" value="9" onclick={handleClick} class="slds-var-m-left_x-small"></lightning-button>
-                    <lightning-button variant="Brand" label="Limit" value="10" onclick={handleClick} class="slds-var-m-left_x-small"></lightning-button>
-                    <lightning-button variant="Brand" label="Null Pointer" value="11" onclick={handleClick} class="slds-var-m-left_x-small"></lightning-button>
-                </div>
+                <lightning-layout>
+                    <lightning-layout-item size="12" small-device-size="12" medium-device-size="5" large-device-size="5">
+                        <lightning-layout multiple-rows pull-to-boundary="small">
+                            <lightning-layout-item size="12" padding="around-small">
+                                <div style="display: inline-block;">
+                                    <lightning-input 
+                                        type="toggle" 
+                                        name="isCustomHandledException"
+                                        label="Is Custom Handled Exception" 
+                                        checked={isCustomHandledException}
+                                        onchange={handleChange}
+                                        class="slds-var-m-top_xx-small"
+                                        message-toggle-active=""
+                                        message-toggle-inactive="">
+                                    </lightning-input>
+                                </div>
+
+                                    <div class="slds-float_right">
+                                        <lightning-button 
+                                            variant="Brand" 
+                                            label="Throw Exception" 
+                                            onclick={handleClick}>
+                                        </lightning-button>
+                                    </div>
+
+                                
+                                
+                            </lightning-layout-item>
+                            <lightning-layout-item size="12" padding="around-small">
+                                <lightning-input 
+                                    type="text"
+                                    name="customUserMessage"
+                                    label="Custom User Message"
+                                    value={customUserMessage}
+                                    onchange={handleChange}>
+                                </lightning-input>
+                            </lightning-layout-item>
+                            <lightning-layout-item padding="around-small">
+                                <lightning-radio-group 
+                                    type="radio"
+                                    name="customAppString"
+                                    label="Custom App"
+                                    value={customAppString}
+                                    options={customAppOptions}
+                                    onchange={handleChange}>
+                                </lightning-radio-group>
+                            </lightning-layout-item>
+                            <lightning-layout-item padding="around-small">
+                                <lightning-radio-group 
+                                    type="radio"
+                                    name="exceptionName"
+                                    label="Exception Type"
+                                    value={exceptionName}
+                                    options={exceptionOptions}
+                                    onchange={handleChange}>
+                                </lightning-radio-group>
+                            </lightning-layout-item>
+                            <lightning-layout-item padding="around-small">
+                                <lightning-radio-group 
+                                    type="radio"
+                                    name="severityString"
+                                    label="Severity"
+                                    value={severityString}
+                                    options={severityOptions}
+                                    onchange={handleChange}>
+                                </lightning-radio-group>
+                            </lightning-layout-item>
+                            <lightning-layout-item padding="around-small">
+                                <lightning-radio-group 
+                                    type="radio"
+                                    name="saveModeString"
+                                    label="Save Mode"
+                                    value={saveModeString}
+                                    options={saveModeOptions}
+                                    onchange={handleChange}>
+                                </lightning-radio-group>
+                            </lightning-layout-item>
+                        </lightning-layout>
+                    </lightning-layout-item>
+                    <lightning-layout-item size="7">
+                        <lightning-card>
+                            <div style="background-color:grey">
+
+                            </div>
+                        </lightning-card>
+                    </lightning-layout-item>
+                </lightning-layout>
             </div>
         </lightning-card>
     </div>

@@ -58,7 +58,8 @@
                 if(customHandledException?.dmlExceptions?.length > 0){
                     return customHandledException.dmlExceptions.map(dmlException => dmlException.message);
                 } else {
-                    return customHandledException.message; 
+                    const hasCustomUserMessage = customHandledException.customUserMessage;
+                    return hasCustomUserMessage ? customHandledException.customUserMessage : customHandledException.message; 
                 }
             } catch {
                 return error.body.message;
