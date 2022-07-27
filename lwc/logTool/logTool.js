@@ -105,10 +105,15 @@ export default class LogTool extends LightningElement {
                 const exception = log.Exception__c ? JSON.parse(log.Exception__c) : undefined;
                 
                 if(!exception){
-                    row.message = log.message;
+                    if(row.type === 'System.JSON'){
+                        row.json = log.Message__c;
+                    } else {
+                        row.message = log.Message__c;
+                    }
                 } else {
                     row.stackTrace = exception.stackTrace;
                     row.lineNumber = exception.lineNumber;
+                    row.customUserMessage = exception.customUserMessage;
 
                     if(exception.dmlExceptions){
                         row.dmlExceptions = exception.dmlExceptions.map( dml => {
@@ -122,6 +127,7 @@ export default class LogTool extends LightningElement {
 
                 return row;
             }) : undefined;
+
         } catch(errors) {
             getErrorMessages(errors).forEach(message => {
                 this.toastError(message);
@@ -134,6 +140,7 @@ export default class LogTool extends LightningElement {
             this.loading = true;
             await deleteAllLogs();
             this.pageNumber = 1;
+            this.selectedLog = undefined;
             this.refresh();
         } catch(errors){
             getErrorMessages(errors).forEach(message => {
@@ -148,6 +155,7 @@ export default class LogTool extends LightningElement {
             const logIds = this.template.querySelector('lightning-datatable').selectedRows;
             await deleteSelectedLogs({ logIds });
             this.pageNumber = 1;
+            this.selectedLog = undefined;
             this.refresh();
         } catch(errors){
             getErrorMessages(errors).forEach(message => {

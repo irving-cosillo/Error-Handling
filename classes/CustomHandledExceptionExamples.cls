@@ -69,6 +69,22 @@ public with sharing class CustomHandledExceptionExamples {
         }
     }
 
+    @AuraEnabled
+    public static void logSObjectExample(){
+        List<Account> accountList = [
+            SELECT 
+                Id, Name, Phone, Owner.Name 
+            FROM Account 
+            LIMIT 3
+        ];
+        Log.jsonObject(accountList, Log.SAVE_MODE.ALWAYS);
+    }
+
+    @AuraEnabled
+    public static void logMessageExample(){
+        Log.message('Test message from apex', Log.SAVE_MODE.ALWAYS);
+    }
+
     private static void throwException(String exceptionName){
         switch on exceptionName {
             when 'DML' {

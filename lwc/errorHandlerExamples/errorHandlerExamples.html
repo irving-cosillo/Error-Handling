@@ -1,95 +1,140 @@
 <template>
-    <div class="slds-var-m-bottom_medium">
-        <lightning-card>
-            <div class="slds-var-p-around_medium">
-                <lightning-layout>
-                    <lightning-layout-item size="12" small-device-size="12" medium-device-size="5" large-device-size="5">
-                        <lightning-layout multiple-rows pull-to-boundary="small">
-                            <lightning-layout-item size="12" padding="around-small">
-                                <div style="display: inline-block;">
-                                    <lightning-input 
-                                        type="toggle" 
-                                        name="isCustomHandledException"
-                                        label="Is Custom Handled Exception" 
-                                        checked={isCustomHandledException}
-                                        onchange={handleChange}
-                                        class="slds-var-m-top_xx-small"
-                                        message-toggle-active=""
-                                        message-toggle-inactive="">
-                                    </lightning-input>
-                                </div>
-
-                                    <div class="slds-float_right">
-                                        <lightning-button 
-                                            variant="Brand" 
-                                            label="Throw Exception" 
-                                            onclick={handleClick}>
-                                        </lightning-button>
-                                    </div>
-
-                                
-                                
-                            </lightning-layout-item>
-                            <lightning-layout-item size="12" padding="around-small">
-                                <lightning-input 
-                                    type="text"
-                                    name="customUserMessage"
-                                    label="Custom User Message"
-                                    value={customUserMessage}
-                                    onchange={handleChange}>
-                                </lightning-input>
-                            </lightning-layout-item>
-                            <lightning-layout-item padding="around-small">
-                                <lightning-radio-group 
-                                    type="radio"
-                                    name="customAppString"
-                                    label="Custom App"
-                                    value={customAppString}
-                                    options={customAppOptions}
-                                    onchange={handleChange}>
-                                </lightning-radio-group>
-                            </lightning-layout-item>
-                            <lightning-layout-item padding="around-small">
-                                <lightning-radio-group 
-                                    type="radio"
-                                    name="exceptionName"
-                                    label="Exception Type"
-                                    value={exceptionName}
-                                    options={exceptionOptions}
-                                    onchange={handleChange}>
-                                </lightning-radio-group>
-                            </lightning-layout-item>
-                            <lightning-layout-item padding="around-small">
-                                <lightning-radio-group 
-                                    type="radio"
-                                    name="severityString"
-                                    label="Severity"
-                                    value={severityString}
-                                    options={severityOptions}
-                                    onchange={handleChange}>
-                                </lightning-radio-group>
-                            </lightning-layout-item>
-                            <lightning-layout-item padding="around-small">
-                                <lightning-radio-group 
-                                    type="radio"
-                                    name="saveModeString"
-                                    label="Save Mode"
-                                    value={saveModeString}
-                                    options={saveModeOptions}
-                                    onchange={handleChange}>
-                                </lightning-radio-group>
-                            </lightning-layout-item>
-                        </lightning-layout>
+    <lightning-card>
+        <div class="slds-var-p-horizontal_large slds-var-m-horizontal_large">
+            <lightning-layout multiple-rows pull-to-boundary="large">
+                <lightning-layout-item size="12" small-device-size="12" medium-device-size="5" large-device-size="5" padding="around-large">
+                    <lightning-layout multiple-rows pull-to-boundary="small" horizontal-align="spread">
+                        <lightning-layout-item padding="horizontal-small">
+                            <lightning-input 
+                                type="toggle" 
+                                name="isCustomHandledException"
+                                label="Is Custom Handled Exception" 
+                                checked={isCustomHandledException}
+                                onchange={handleChange}
+                                class="slds-var-m-top_xx-small"
+                                message-toggle-active=""
+                                message-toggle-inactive="">
+                            </lightning-input>
+                        </lightning-layout-item>
+                        <lightning-layout-item padding="horizontal-small" alignment-bump="left">
+                            <lightning-button 
+                                variant="Brand"
+                                name="throwException"
+                                label="Throw Exception" 
+                                onclick={handleClick}>
+                            </lightning-button>
+                        </lightning-layout-item>
+                        <lightning-layout-item size="12" padding="around-small">
+                            <lightning-input 
+                                type="text"
+                                name="customUserMessage"
+                                label="Custom User Message"
+                                value={customUserMessage}
+                                onchange={handleChange}>
+                            </lightning-input>  
+                        </lightning-layout-item>
+                        <lightning-layout-item padding="around-small">
+                            <lightning-radio-group 
+                                type="radio"
+                                name="customAppString"
+                                label="Custom App"
+                                value={customAppString}
+                                options={customAppOptions}
+                                onchange={handleChange}>
+                            </lightning-radio-group>
+                        </lightning-layout-item>
+                        <lightning-layout-item padding="around-small">
+                            <lightning-radio-group 
+                                type="radio"
+                                name="exceptionName"
+                                label="Exception Type"
+                                value={exceptionName}
+                                options={exceptionOptions}
+                                onchange={handleChange}>
+                            </lightning-radio-group>
+                        </lightning-layout-item>
+                        <lightning-layout-item padding="around-small">
+                            <lightning-radio-group 
+                                type="radio"
+                                name="severityString"
+                                label="Severity"
+                                value={severityString}
+                                options={severityOptions}
+                                onchange={handleChange}>
+                            </lightning-radio-group>
+                        </lightning-layout-item>
+                        <lightning-layout-item padding="around-small">
+                            <lightning-radio-group 
+                                type="radio"
+                                name="saveModeString"
+                                label="Save Mode"
+                                value={saveModeString}
+                                options={saveModeOptions}
+                                onchange={handleChange}>
+                            </lightning-radio-group>
+                        </lightning-layout-item>
+                        <lightning-layout-item size="12" padding="around-small">
+                            <div class="slds-var-m-bottom_large slds-border_bottom"></div>
+                        </lightning-layout-item>
+                        <lightning-layout-item padding="horizontal-small">
+                            <lightning-input 
+                                type="toggle" 
+                                name="isJSONMessage"
+                                label="Is JSON?" 
+                                checked={isJSONMessage}
+                                onchange={handleChange}
+                                message-toggle-active=""
+                                message-toggle-inactive="">
+                            </lightning-input>
+                        </lightning-layout-item>
+                        <lightning-layout-item padding="horizontal-small" alignment-bump="left">
+                            <lightning-button 
+                                variant="Brand"
+                                name="logFromLWC"
+                                label="Log From LWC"
+                                onclick={handleClick}>
+                            </lightning-button>
+                        </lightning-layout-item>
+                        <lightning-layout-item size="12" padding="around-small">
+                            <lightning-input 
+                                type="text"
+                                name="message"
+                                label="Message"
+                                value={message}
+                                onchange={handleChange}>
+                            </lightning-input>
+                        </lightning-layout-item>
+                    </lightning-layout>
+                    <lightning-layout-item size="12" padding="around-small">
+                        <div class="slds-var-m-bottom_large slds-border_bottom"></div>
                     </lightning-layout-item>
-                    <lightning-layout-item size="7">
-                        <lightning-card>
-                            <div style="background-color:grey">
-
-                            </div>
-                        </lightning-card>
+                    <lightning-layout-item padding="horizontal-small">
+                        <lightning-button 
+                            variant="Brand"
+                            name="logMessage"
+                            label="Log Message From Apex"
+                            class="slds-var-m-right_large"
+                            onclick={handleClick}>
+                        </lightning-button>
+                        <lightning-button 
+                            variant="Brand"
+                            name="logSObject"
+                            label="Log SObject From Apex"
+                            onclick={handleClick}>
+                        </lightning-button>
                     </lightning-layout-item>
-                </lightning-layout>
-            </div>
-        </lightning-card>
-    </div>
+                </lightning-layout-item>
+                <lightning-layout-item size="12" small-device-size="12" medium-device-size="7" large-device-size="7" padding="around-large">
+                    <p>
+                        Apex Implementation:
+                    </p>
+                    <pre style="background-color: ghostwhite; border: 1px solid silver;">
+                        <code>
+                            {apexTemplate}
+                        </code>
+                    </pre>
+                </lightning-layout-item>
+            </lightning-layout>
+        </div>
+    </lightning-card>
 </template>

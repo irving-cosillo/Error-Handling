@@ -11,19 +11,31 @@
     <div class="slds-var-p-bottom_small">
         <b>Type: </b> {selectedLog.type}
     </div>
-    <div class="slds-var-p-bottom_small">
+    <div class="slds-var-p-bottom_small" if:true={selectedLog.severity}>
         <b>Severity: </b> {selectedLog.severity}
     </div>
-    <div class="slds-var-p-bottom_small">
+    <div class="slds-var-p-bottom_small" if:true={selectedLog.customApp}>
         <b>Custom App: </b> {selectedLog.customApp}
     </div>
     <div class="slds-var-p-bottom_small" if:true={selectedLog.message}>
-        <b>Message: </b> {selectedLog.message}
+        <b>Message: </b> 
+        <pre>
+            <code>{selectedLog.message}</code>
+        </pre>
     </div>
-    <div class="slds-var-p-bottom_small">
+    <div class="slds-var-p-bottom_small" if:true={selectedLog.json}>
+        <b>JSON Message: </b> 
+        <pre>
+            <code class="html-container" lwc:dom="manual"></code>
+        </pre>
+    </div>
+    <div class="slds-var-p-bottom_small" if:true={selectedLog.customUserMessage}>
+        <b>Custom User Message: </b> {selectedLog.customUserMessage}
+    </div>
+    <div class="slds-var-p-bottom_small" if:true={selectedLog.stackTrace}>
         <b>Stack Trace: </b> {selectedLog.stackTrace}
     </div>
-    <div class="slds-var-p-bottom_small">
+    <div class="slds-var-p-bottom_small" if:true={selectedLog.lineNumber}>
         <b>Line Number: </b> {selectedLog.lineNumber}
     </div>
     <div>

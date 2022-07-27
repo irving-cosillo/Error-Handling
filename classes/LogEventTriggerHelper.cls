@@ -1,32 +1,26 @@
 public with sharing class LogEventTriggerHelper {
-    public static void insertLogs(List<Log_Event__e> events) {
-        insert new Account(Name='T');
-        [SELECT COUNT() FROM Account WHERE Name = 'TEST']
-    //     List<Log__c> logs = new List<Log__c>();
-    //     for (Log_Event__e event : events) {
-    //         Log__c log = new Log__c();
-    //         log.Severity__c = event.Severity__c;
-    //         log.Save_Mode__c = event.Save_Mode__c;
-    //         log.Custom_App__c = event.Custom_App__c;
+    public static void insertLogs(List<Log_Event__e> logEvents) {
+        List<Log__c> logRecords = new List<Log__c>();
+        for (Log_Event__e logEvent : logEvents) {
+            Log__c logRecord = new Log__c();
+            logRecord.Severity__c = logEvent.Severity__c;
+            logRecord.Save_Mode__c = logEvent.Save_Mode__c;
+            logRecord.Custom_App__c = logEvent.Custom_App__c;
     
-    //         log.User__c = event.User_Id__c;
-    //         log.Exception__c = event.Exception__c;
-    //         log.Exception_Type__c = event.Exception_Type__c;
-    //         log.Message__c = event.Message__c;
-    //         logs.add(log);
-    //     }
-
-    //     insert logs;
-
-    //     for(Log__c logRecord : logs){
-    //         Boolean isCriticalLog = logRecord.Severity__c == Log.SEVERITY.CRITICAL.name();
-    //         if(isCriticalLog){
-    //             sendEmail(logRecord);
-    //         }
-    //     }
+            logRecord.User__c = logEvent.User_Id__c;
+            logRecord.Message__c = logEvent.Message__c;
+            logRecord.Exception__c = logEvent.Exception__c;
+            logRecord.Exception_Type__c = logEvent.Exception_Type__c;
+            logRecords.add(logRecord);
+        }
+    
+        insert logRecords;
+    
+        for(Log__c logRecord : logRecords){
+            Boolean isCriticalLog = logRecord.Severity__c == Log.SEVERITY.CRITICAL.name();
+            if(isCriticalLog){
+                System.debug('@@@ Sending email as critical log was reported: ' + logRecord);
+            }
+        }
     }
-
-    // private static void sendEmail(Log__c log){
-    //     System.debug('@@@ Sending email as critical log was reported: ' + log);
-    // }
 }
