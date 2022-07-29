@@ -1,72 +1,240 @@
 <template>
-    <div class="slds-var-p-bottom_small">
-        <b>Log Id: </b> {selectedLog.id}
-    </div>
-    <div class="slds-var-p-bottom_small">
-        <b>User Name: </b> {selectedLog.userName}
-    </div>
-    <div class="slds-var-p-bottom_small">
-        <b>Profile: </b> {selectedLog.profileName}
-    </div>
-    <div class="slds-var-p-bottom_small">
-        <b>Type: </b> {selectedLog.type}
-    </div>
-    <div class="slds-var-p-bottom_small" if:true={selectedLog.severity}>
-        <b>Severity: </b> {selectedLog.severity}
-    </div>
-    <div class="slds-var-p-bottom_small" if:true={selectedLog.customApp}>
-        <b>Custom App: </b> {selectedLog.customApp}
-    </div>
-    <div class="slds-var-p-bottom_small" if:true={selectedLog.message}>
-        <b>Message: </b> 
-        <pre>
-            <code>{selectedLog.message}</code>
-        </pre>
-    </div>
-    <div class="slds-var-p-bottom_small" if:true={selectedLog.json}>
-        <b>JSON Message: </b> 
-        <pre>
-            <code class="html-container" lwc:dom="manual"></code>
-        </pre>
-    </div>
-    <div class="slds-var-p-bottom_small" if:true={selectedLog.customUserMessage}>
-        <b>Custom User Message: </b> {selectedLog.customUserMessage}
-    </div>
-    <div class="slds-var-p-bottom_small" if:true={selectedLog.stackTrace}>
-        <b>Stack Trace: </b> {selectedLog.stackTrace}
-    </div>
-    <div class="slds-var-p-bottom_small" if:true={selectedLog.lineNumber}>
-        <b>Line Number: </b> {selectedLog.lineNumber}
-    </div>
-    <div>
-        <b>Created Date: </b> 
-        <lightning-formatted-date-time 
-            value={selectedLog.createdDate} 
-            year="numeric" 
-            month="numeric" 
-            day="numeric" 
-            hour="2-digit"
-            minute="2-digit" 
-            time-zone-name="short">
-        </lightning-formatted-date-time>
-    </div>
+
+    <lightning-layout multiple-rows pull-to-boundary="medium">
+        <lightning-layout-item size="12" small-device-size="12" medium-device-size="6" large-device-size="6" padding="around-medium">
+            <div class="slds-border_bottom">
+                <p class="slds-text-title_bold">Log Id</p>
+                <p class="slds-text-body_regular slds-var-m-vertical_xx-small">
+                    {selectedLog.id}
+                </p>
+            </div>
+
+            <div class="slds-var-m-top_medium slds-border_bottom">
+                <p class="slds-text-title_bold">User Name</p>
+                <p class="slds-text-body_regular slds-var-m-vertical_xx-small">
+                    {selectedLog.userName}
+                </p>
+            </div>
+
+            <div if:true={isException} class="slds-var-m-top_medium slds-border_bottom">
+                <p class="slds-text-title_bold">Profile</p>
+                <p class="slds-text-body_regular slds-var-m-vertical_xx-small">
+                    {selectedLog.profileName}
+                </p>
+            </div>
+
+            <div if:false={isException} class="slds-var-m-top_medium">
+                <p class="slds-text-title_bold">Profile</p>
+                <p class="slds-text-body_regular slds-var-m-vertical_xx-small">
+                    {selectedLog.profileName}
+                </p>
+            </div>
+
+            <div class="slds-var-m-top_medium slds-border_bottom" if:true={selectedLog.customUserMessage}>
+                <p class="slds-text-title_bold">Custom User Error Message</p>
+                <p class="slds-text-color_error slds-text-body_regular slds-var-m-vertical_xx-small">
+                    {selectedLog.customUserMessage}
+                </p>
+            </div>
+
+            <div if:true={isException}>
+                <div class="slds-var-m-top_medium slds-border_bottom" if:true={selectedLog.message}>
+                    <p class="slds-text-title_bold">Error Message</p>
+                    <p class="slds-text-color_error slds-text-body_regular slds-var-m-vertical_xx-small">
+                        {selectedLog.message}
+                    </p>
+                </div>
+            </div>
+
+            <div if:true={isException} class="slds-var-m-top_medium">
+                <p class="slds-text-title_bold">Created Date</p>
+                <p class="slds-text-body_regular slds-var-m-vertical_xx-small">
+                    <lightning-formatted-date-time 
+                        value={selectedLog.createdDate} 
+                        year="numeric" 
+                        month="numeric" 
+                        day="numeric" 
+                        hour="2-digit"
+                        minute="2-digit" 
+                        time-zone-name="short">
+                    </lightning-formatted-date-time>
+                </p>
+            </div>
+        </lightning-layout-item>
+        <lightning-layout-item size="12" small-device-size="12" medium-device-size="6" large-device-size="6" padding="around-medium">
+            <div class="slds-border_bottom">
+                <p class="slds-text-title_bold">Type</p>
+                <p class="slds-text-body_regular slds-var-m-vertical_xx-small">
+                    {selectedLog.type}
+                </p>
+            </div>
+
+            <div class="slds-var-m-top_medium slds-border_bottom" if:true={selectedLog.severity}>
+                <p class="slds-text-title_bold">Severity</p>
+
+                <p if:true={isHighOrCritical} class="slds-text-color_error slds-text-body_regular slds-var-m-vertical_xx-small">
+                    {selectedLog.severity}
+                </p>
+                <p if:false={isHighOrCritical} class="slds-text-body_regular slds-var-m-vertical_xx-small">
+                    {selectedLog.severity}
+                </p>
+            </div>
+
+            <div class="slds-var-m-top_medium slds-border_bottom" if:true={selectedLog.customApp}>
+                <p class="slds-text-title_bold">Custom Application</p>
+                <p class="slds-text-body_regular slds-var-m-vertical_xx-small">
+                    {selectedLog.customApp}
+                </p>
+            </div>
+
+            <div class="slds-var-m-top_medium slds-border_bottom" if:true={selectedLog.lineNumber}>
+                <p class="slds-text-title_bold">Line Number</p>
+                <p class="slds-text-body_regular slds-var-m-vertical_xx-small">
+                    {selectedLog.lineNumber}
+                </p>
+            </div>
+
+            <div class="slds-var-m-top_medium" if:true={selectedLog.stackTrace}>
+                <p class="slds-text-title_bold">Stack Trace</p>
+                <p class="slds-text-body_regular slds-var-m-vertical_xx-small">
+                    {selectedLog.stackTrace}
+                </p>
+            </div>
+
+            <div class="slds-var-m-top_medium" if:false={isException}>
+                <p class="slds-text-title_bold">Created Date</p>
+                <p class="slds-text-body_regular slds-var-m-vertical_xx-small">
+                    <lightning-formatted-date-time 
+                        value={selectedLog.createdDate} 
+                        year="numeric" 
+                        month="numeric" 
+                        day="numeric" 
+                        hour="2-digit"
+                        minute="2-digit" 
+                        time-zone-name="short">
+                    </lightning-formatted-date-time>
+                </p>
+            </div>
+        </lightning-layout-item>
+
+        <lightning-layout-item size="12" padding="around-medium" if:false={isException}>
+            <div class="slds-var-m-top_medium" if:true={selectedLog.message}>
+                <p class="slds-text-title_bold">Message</p>
+                <pre class="slds-var-m-vertical_xx-small">
+                    <code>
+                        {selectedLog.message}
+                    </code>
+                </pre>
+            </div>
+
+            <div class="slds-var-m-top_medium" if:true={selectedLog.json}>
+                <p class="slds-text-title_bold">JSON Message</p>
+                <pre class="slds-var-m-vertical_xx-small">
+                    <code class="html-container" lwc:dom="manual"></code>
+                </pre>
+            </div>
+        </lightning-layout-item>
+
+        <lightning-layout-item size="12" padding="around-medium">
+            <p if:true={selectedLog.dmlExceptions} class="slds-text-title_bold slds-var-m-top_large">
+                DML Exceptions
+            </p>
+            <lightning-layout multiple-rows pull-to-boundary="medium">
+                <template for:each={selectedLog.dmlExceptions} for:item="dmlException">
+                    <lightning-layout-item key={dmlException.id} size="12" small-device-size="12" medium-device-size="6" large-device-size="6" padding="around-medium">
+                        <div class="slds-card_boundary">
+                            <lightning-card>
+                                <div class="slds-var-p-horizontal_large slds-var-p-bottom_small"> 
+                                    <div class="slds-var-m-top_medium slds-border_bottom" if:true={dmlException.id}>
+                                        <p class="slds-text-title_bold">Id</p>
+                                        <p class="slds-text-body_regular slds-var-m-vertical_xx-small">
+                                            {dmlException.id}
+                                        </p>
+                                    </div>
+        
+                                    <div class="slds-var-m-top_medium slds-border_bottom">
+                                        <p class="slds-text-title_bold">Index</p>
+                                        <p class="slds-text-body_regular slds-var-m-vertical_xx-small">
+                                            {dmlException.index}
+                                        </p>
+                                    </div>
+        
+                                    <div class="slds-var-m-top_medium slds-border_bottom">
+                                        <p class="slds-text-title_bold">Field Names</p>
+                                        <p class="slds-text-body_regular slds-var-m-vertical_xx-small">
+                                            {dmlException.fieldNames}
+                                        </p>
+                                    </div>
+                                
+                                    <div class="slds-var-m-top_medium slds-border_bottom">
+                                        <p class="slds-text-title_bold">Status Code</p>
+                                        <p class="slds-text-body_regular slds-var-m-vertical_xx-small">
+                                            {dmlException.statusCode}
+                                        </p>
+                                    </div>  
+
+                                    <div class="slds-var-m-top_medium">
+                                        <p class="slds-text-title_bold">Error Message</p>
+                                        <p class="slds-text-color_error slds-text-body_regular slds-var-m-vertical_xx-small">
+                                            {dmlException.message}
+                                        </p>
+                                    </div>
+                                </div>
+                            </lightning-card>
+                        </div>
+                    </lightning-layout-item>
+                </template>
+            </lightning-layout>
+        </lightning-layout-item>
+    </lightning-layout>
+</template>
+
+<!-- <lightning-layout-item size="12" padding="around-medium">
     <template for:each={selectedLog.dmlExceptions} for:item="dmlException">
-        <div key={dmlException.id} class="slds-var-p-horizontal_large slds-var-m-horizontal_large slds-var-p-top_small slds-border_bottom">
-            <div class="slds-var-p-bottom_small" if:true={dmlException.id}>
-                <b>id: </b> {dmlException.id}
-            </div>
-            <div class="slds-var-p-bottom_small">
-                <b>Index: </b> {dmlException.index}
-            </div>
-            <div class="slds-var-p-bottom_small">
-                <b>Field Names: </b> {dmlException.fieldNames}
-            </div>
-            <div class="slds-var-p-bottom_small">
-                <b>Message: </b> {dmlException.message}
-            </div>
-            <div class="slds-var-p-bottom_small">
-                <b>Status Code: </b> {dmlException.statusCode}
-            </div>
+        <div key={dmlException.id}>
+            <lightning-card>
+                <div class="slds-var-p-horizontal_large">
+                    <lightning-layout multiple-rows pull-to-boundary="medium">
+                        <lightning-layout-item size="12" small-device-size="12" medium-device-size="6" large-device-size="6" padding="around-medium">
+                            <div class="slds-var-m-top_medium slds-border_bottom" if:true={dmlException.id}>
+                                <p class="slds-text-title_bold">Id</p>
+                                <p class="slds-text-body_regular slds-var-m-vertical_xx-small">
+                                    {dmlException.id}
+                                </p>
+                            </div>
+
+                            <div class="slds-var-m-top_medium slds-border_bottom">
+                                <p class="slds-text-title_bold">Index</p>
+                                <p class="slds-text-body_regular slds-var-m-vertical_xx-small">
+                                    {dmlException.index}
+                                </p>
+                            </div>
+
+                            <div class="slds-var-m-top_medium slds-border_bottom">
+                                <p class="slds-text-title_bold">Field Names</p>
+                                <p class="slds-text-body_regular slds-var-m-vertical_xx-small">
+                                    {dmlException.fieldNames}
+                                </p>
+                            </div>
+                        </lightning-layout-item>
+                        <lightning-layout-item size="12" small-device-size="12" medium-device-size="6" large-device-size="6" padding="around-medium">
+                            <div class="slds-var-m-top_medium slds-border_bottom">
+                                <p class="slds-text-title_bold">Error Message</p>
+                                <p class="slds-text-body_regular slds-var-m-vertical_xx-small">
+                                    {dmlException.message}
+                                </p>
+                            </div>
+
+                            <div class="slds-var-m-top_medium slds-border_bottom">
+                                <p class="slds-text-title_bold">Status Code</p>
+                                <p class="slds-text-body_regular slds-var-m-vertical_xx-small">
+                                    {dmlException.statusCode}
+                                </p>
+                            </div>
+                        </lightning-layout-item>
+                    </lightning-layout>
+                </div>
+            </lightning-card>
         </div>
     </template>
-</template>
+</lightning-layout-item> -->

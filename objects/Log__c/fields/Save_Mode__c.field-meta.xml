@@ -11,19 +11,14 @@
         <valueSetDefinition>
             <sorted>false</sorted>
             <value>
-                <fullName>ENABLED</fullName>
+                <fullName>ALWAYS</fullName>
                 <default>false</default>
-                <label>ENABLED</label>
+                <label>ALWAYS</label>
             </value>
             <value>
-                <fullName>DISABLED</fullName>
+                <fullName>FLAG_BASED</fullName>
                 <default>false</default>
-                <label>DISABLED</label>
-            </value>
-            <value>
-                <fullName>BASED_ON_FLAG</fullName>
-                <default>false</default>
-                <label>BASED_ON_FLAG</label>
+                <label>FLAG_BASED</label>
             </value>
         </valueSetDefinition>
     </valueSet>

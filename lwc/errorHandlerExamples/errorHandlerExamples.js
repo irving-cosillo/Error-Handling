@@ -10,6 +10,7 @@ import logJsonFromLWC from '@salesforce/apex/Log.logJsonFromLWC';
 
 export default class ErrorHandlerExamples extends LightningElement {
 
+    isProcessErrors = true;
     isCustomHandledException = true;
     exceptionName = 'DML';
     customUserMessage;
@@ -59,18 +60,16 @@ export default class ErrorHandlerExamples extends LightningElement {
     }
 
     handleChange({ target }){
-        const { name, value, checked } = target;
-        this[name] = name === 'isCustomHandledException' || name === 'isJSONMessage' ? checked : value;
+        const { name, value, checked, type } = target;
+        this[name] = type === 'toggle' ? checked : value;
 
-        const exceptionFields = ['severityString','saveModeString','customAppString','exceptionName','customUserMessage'];
-        if (exceptionFields.includes(name)){
+        const exceptionFields = ['severityString','saveModeString','customAppString','exceptionName','customUserMessage', 'isProcessErrors'];
+        if (exceptionFields.includes(name) || (name ==='isCustomHandledException' &&  this[name] === true)){
             this.fillExceptionTemplate();
         } else if (['isJSONMessage','message'].includes(name)) {
             this.fillMessageTemplate();
         } else {
-            this.apexTemplate = `
-            
-            `;
+            this.apexTemplate = '';
         }
     }
 
@@ -154,9 +153,16 @@ export default class ErrorHandlerExamples extends LightningElement {
                 mode: 'sticky'
             }));
         } catch(errors){
-            getErrorMessages(errors).forEach( message => {
-                this.toastError(message);
-            });
+            if(this.isProcessErrors){
+                getErrorMessages(errors).forEach( message => {
+                    this.toastError(message);
+                });
+            } else {
+                console.error(errors);
+                if (errors?.body?.message){
+                    this.toastError(errors.body.message);
+                }
+            }
         }
     }
 
